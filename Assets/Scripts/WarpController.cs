@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class WarpController : MonoBehaviour {
 
-	void OnTriggerEnter(Collider other) {
+	void OnTriggerEnter(Collider col) {
 		// 階数を保存する
 		int nextFloor = PlayerPrefs.GetInt("NextFloor");
 		if (nextFloor < 1) nextFloor = 1;

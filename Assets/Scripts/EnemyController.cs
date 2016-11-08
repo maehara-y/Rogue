@@ -1,28 +1,110 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class EnemyController : MonoBehaviour {
 
-	private GameObject target;
-	private NavMeshAgent agent;
+	public float speed = 3.0f;
+
+	private GameObject target;	// プレイヤーのこと
+	//private NavMeshAgent agent;
+	private CharacterController controller;
 	private Animator animator;
+	private EnemyModel enemyModel;
+
+	private bool isDead = false;
+	private bool isAttack = false;
 
 	// Use this for initialization
 	void Start () {
-		agent = GetComponent<NavMeshAgent>();
+		//agent = GetComponent<NavMeshAgent>();
+		controller = GetComponent<CharacterController>();
 		animator = GetComponent<Animator>();
+		enemyModel = GetComponent<EnemyModel>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		// TODO:一定時間おきにやったほうがよい？
+		if (isDead) return;
+		
+		// TODO:パフォーマンス的に一定時間おきにやったほうがよさそう
 		if (target)	{
-			agent.destination = target.transform.position;
-			animator.SetBool("Run", true);
+			if (target.GetComponent<PlayerController>().isDead) return;
+
+			transform.LookAt(target.transform);
+			float distance = Vector3.Distance(transform.position, target.transform.position);
+			if (distance < 3f) {
+				if (!isAttack) StartCoroutine(Attack());
+			} else {
+				//agent.destination = target.transform.position;
+				controller.SimpleMove(transform.forward * this.speed);
+				animator.SetBool("Run", true);
+			}
 		}
 	}
 
-	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.tag == "PlayerTag") target = other.gameObject;
+	// 死んだ処理
+	IEnumerator Die() {
+		yield return new WaitForSeconds(2f);
+		// TODO:消滅エフェクトをいれる
+		Destroy(this.gameObject, 2f);
+	}
+
+	// 攻撃
+	IEnumerator Attack() {
+		isAttack = true;
+		animator.SetBool("Run", false);
+		animator.SetTrigger("Attack");
+		yield return new WaitForSeconds(1.5f);
+
+		// 攻撃エフェクトの発生
+		Vector3 hitEffectPosition = transform.position + transform.forward * 2;
+		hitEffectPosition.y += 1;
+		GameObject attackPrefab = (GameObject)Resources.Load(enemyModel.attackParticleName);
+		GameObject attackParticle = Instantiate(attackPrefab, hitEffectPosition, Quaternion.identity) as GameObject;
+		attackParticle.GetComponent<EnemyAttack>().enemyModel = enemyModel;
+
+		yield return new WaitForSeconds(1f);
+		isAttack = false;
+	}
+
+	// 索敵用の衝突判定 (範囲内に入ったらプレイヤーを追跡対象とする)
+	void OnTriggerEnter(Collider col) {
+		if (col.gameObject.tag == "PlayerTag") target = col.gameObject;
+	}
+
+	// ダメージ用の衝突判定
+	void OnCollisionEnter(Collision col) {
+		if (isDead || col.gameObject.tag != "PlayerAttackTag") return;
+		if (col.gameObject.GetComponent<PlayerController>().isDead) return;
+
+		// 魔法がヒットしたらダメージ計算をする
+		GameObject playerObj = GameObject.FindWithTag("PlayerTag");
+		PlayerModel playerModel = playerObj.GetComponent<PlayerModel>();
+		PlayerController playerController = playerObj.GetComponent<PlayerController>();
+		if (col.gameObject.GetComponent<ProjectileScript>()) {
+			ProjectileScript magic = (ProjectileScript)col.gameObject.GetComponent<ProjectileScript>();
+			int damage = 0;
+			if (BattleCalculator.IsHitEnemy(playerModel, magic.magicModel, enemyModel)) {
+				damage = BattleCalculator.GetEnemyDamage(playerModel, magic.magicModel, enemyModel);
+			}
+
+			// ダメージを受ける。HPが0以下になったら死ぬ。
+			if (enemyModel.hp < damage) {
+				enemyModel.hp = 0;
+				isDead = true;
+				// 経験値を獲得
+				playerModel.AddExp(enemyModel.exp);
+				playerController.DisplayStatus();
+				animator.SetBool("Die", true);
+				StartCoroutine(Die());
+			} else {
+				enemyModel.hp -= damage;
+				animator.SetBool("Damage", true);
+				// TODO:被弾後、waitの時間を少し作りたい
+			}
+		}
+
+		// TODO:違うタイプの攻撃はここに実装していく？
 	}
 }
