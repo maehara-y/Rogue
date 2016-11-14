@@ -3,30 +3,30 @@ using System.Collections;
 
 public class PlayerModel : MonoBehaviour {
 
-	public int id { get; set; }
-	public int avatarColor { get; set; }
-	public float moveSpeed { get; set; }
-	public int growthType { get; set; }
-	public int lv { get; set; }
-	public int exp { get; set; }
-	public int maxHp { get; set; }
-	public int maxMp { get; set; }
-	public int hp { get; set; }
-	public int mp { get; set; }
-	public int str { get; set; }
-	public int vit { get; set; }
-	public int dex { get; set; }
-	public int agi { get; set; }
-	public int weaponId { get; set; }
-	public int shieldId { get; set; }
-	public int armorId { get; set; }
-	public int accessaryId { get; set; }
-	public int currentMagicId { get; set; }
-	public int currentItemId { get; set; }
-	public int itemSlotCount { get; set; }
-	public int money { get; set; }
+	[SerializeField] public int id { get; set; }
+	[SerializeField] public int avatarColor { get; set; }
+	[SerializeField] public float moveSpeed { get; set; }
+	[SerializeField] public int growthType { get; set; }
+	[SerializeField] public int lv { get; set; }
+	[SerializeField] public int exp { get; set; }
+	[SerializeField] public int maxHp { get; set; }
+	[SerializeField] public int maxMp { get; set; }
+	[SerializeField] public int hp { get; set; }
+	[SerializeField] public int mp { get; set; }
+	[SerializeField] public int str { get; set; }
+	[SerializeField] public int vit { get; set; }
+	[SerializeField] public int dex { get; set; }
+	[SerializeField] public int agi { get; set; }
+	[SerializeField] public int weaponId { get; set; }
+	[SerializeField] public int shieldId { get; set; }
+	[SerializeField] public int armorId { get; set; }
+	[SerializeField] public int accessaryId { get; set; }
+	[SerializeField] public int currentMagicId { get; set; }
+	[SerializeField] public int currentItemId { get; set; }
+	[SerializeField] public int itemSlotCount { get; set; }
+	[SerializeField] public int money { get; set; }
 
-	void Start() {
+	public void Initialize() {
 		// TODO:実際は初期値はマスターデータから取得し、以降はPlayerPrefsから取得する
 		// オブジェクトのまま突っ込めるPlayerPrefs的な仕組みがあったら便利
 		SetTestData();

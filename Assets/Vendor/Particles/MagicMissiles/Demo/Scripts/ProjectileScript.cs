@@ -20,14 +20,16 @@ public class ProjectileScript : MonoBehaviour
 
         //transform.DetachChildren();
         impactParticle = Instantiate(impactParticle, transform.position, Quaternion.FromToRotation(Vector3.up, impactNormal)) as GameObject;
+		impactParticle.transform.parent = transform;
         //Debug.DrawRay(hit.contacts[0].point, hit.contacts[0].normal * 1, Color.yellow);
 
         if (hit.gameObject.tag == "Destructible") // Projectile will destroy objects tagged as Destructible
         {
-            Destroy(hit.gameObject);
+            //Destroy(hit.gameObject);
         }
 
 
+		/*
         //yield WaitForSeconds (0.05);
         foreach (GameObject trail in trailParticles)
 	    {
@@ -40,6 +42,6 @@ public class ProjectileScript : MonoBehaviour
         Destroy(impactParticle, 5f);
         Destroy(gameObject);
         //projectileParticle.Stop();
-
+		*/
 	}
 }

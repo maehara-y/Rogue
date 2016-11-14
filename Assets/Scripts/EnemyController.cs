@@ -15,14 +15,18 @@ public class EnemyController : MonoBehaviour {
 	private bool isDead = false;
 	private bool isAttack = false;
 
-	// Use this for initialization
-	void Start () {
+	public void Initialize () {
 		//agent = GetComponent<NavMeshAgent>();
 		controller = GetComponent<CharacterController>();
 		animator = GetComponent<Animator>();
 		enemyModel = GetComponent<EnemyModel>();
+		enemyModel.Initialize();
+
+		// TODO:Findは遅いので変える
+		GameObject enemyRoot = GameObject.Find("Enemy");
+		transform.parent = enemyRoot.transform;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		if (isDead) return;
@@ -45,9 +49,9 @@ public class EnemyController : MonoBehaviour {
 
 	// 死んだ処理
 	IEnumerator Die() {
-		yield return new WaitForSeconds(2f);
+		yield return new WaitForSeconds(3f);
 		// TODO:消滅エフェクトをいれる
-		Destroy(this.gameObject, 2f);
+		this.gameObject.SetActive(false);
 	}
 
 	// 攻撃
@@ -75,35 +79,38 @@ public class EnemyController : MonoBehaviour {
 
 	// ダメージ用の衝突判定
 	void OnCollisionEnter(Collision col) {
-		if (isDead || col.gameObject.tag != "PlayerAttackTag") return;
-		if (col.gameObject.GetComponent<PlayerController>().isDead) return;
+		GameObject magic = col.gameObject;
+		if (isDead || magic.tag != "PlayerAttackTag") return;
+		if (!magic.GetComponent<ProjectileScript>()) return;
 
 		// 魔法がヒットしたらダメージ計算をする
 		GameObject playerObj = GameObject.FindWithTag("PlayerTag");
 		PlayerModel playerModel = playerObj.GetComponent<PlayerModel>();
 		PlayerController playerController = playerObj.GetComponent<PlayerController>();
-		if (col.gameObject.GetComponent<ProjectileScript>()) {
-			ProjectileScript magic = (ProjectileScript)col.gameObject.GetComponent<ProjectileScript>();
-			int damage = 0;
-			if (BattleCalculator.IsHitEnemy(playerModel, magic.magicModel, enemyModel)) {
-				damage = BattleCalculator.GetEnemyDamage(playerModel, magic.magicModel, enemyModel);
-			}
+		if (playerController.isDead) return;
 
-			// ダメージを受ける。HPが0以下になったら死ぬ。
-			if (enemyModel.hp < damage) {
-				enemyModel.hp = 0;
-				isDead = true;
-				// 経験値を獲得
-				playerModel.AddExp(enemyModel.exp);
-				playerController.DisplayStatus();
-				animator.SetBool("Die", true);
-				StartCoroutine(Die());
-			} else {
-				enemyModel.hp -= damage;
-				animator.SetBool("Damage", true);
-				// TODO:被弾後、waitの時間を少し作りたい
-			}
+		ProjectileScript projectile = magic.GetComponent<ProjectileScript>();
+		int damage = 0;
+		if (BattleCalculator.IsHitEnemy(playerModel, projectile.magicModel, enemyModel)) {
+			damage = BattleCalculator.GetEnemyDamage(playerModel, projectile.magicModel, enemyModel);
 		}
+
+		// ダメージを受ける。HPが0以下になったら死ぬ。
+		if (enemyModel.hp < damage) {
+			enemyModel.hp = 0;
+			isDead = true;
+			// 経験値を獲得
+			playerModel.AddExp(enemyModel.exp);
+			playerController.DisplayStatus();
+			animator.SetBool("Die", true);
+			StartCoroutine(Die());
+		} else {
+			enemyModel.hp -= damage;
+			animator.SetBool("Damage", true);
+			// TODO:被弾後、waitの時間を少し作りたい
+		}
+
+		magic.SetActive(false);
 
 		// TODO:違うタイプの攻撃はここに実装していく？
 	}

@@ -3,24 +3,21 @@ using System.Collections;
 
 public class MagicModel : MonoBehaviour {
 
-	public int id { get; set; }
-	public string magicName { get; set; }
-	public string prefabName { get; set; }
-	public string animationName { get; set; }
-	public string description { get; set; }
-	public float masterRate { get; set; }
-	public int type { get; set; }
-	public int useMp { get; set; }
-	public int attribute { get; set; }
-	public int effectValue { get; set; }
-	public int targetStatus { get; set; }
-	public float firingRange { get; set; }
-	public float speed { get; set; }
-	public float strikeRate { get; set; }
-	public int duration { get; set; }
-
-	void Start() {
-	}
+	[SerializeField] public int id { get; set; }
+	[SerializeField] public string magicName { get; set; }
+	[SerializeField] public string prefabName { get; set; }
+	[SerializeField] public string animationName { get; set; }
+	[SerializeField] public string description { get; set; }
+	[SerializeField] public float masterRate { get; set; }
+	[SerializeField] public int type { get; set; }
+	[SerializeField] public int useMp { get; set; }
+	[SerializeField] public int attribute { get; set; }
+	[SerializeField] public int effectValue { get; set; }
+	[SerializeField] public int targetStatus { get; set; }
+	[SerializeField] public float firingRange { get; set; }
+	[SerializeField] public float speed { get; set; }
+	[SerializeField] public float strikeRate { get; set; }
+	[SerializeField] public int duration { get; set; }
 
 	// TODO:実際はマスターデータから取得する
 	public void SetMagicId(int id) {

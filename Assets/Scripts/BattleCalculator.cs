@@ -6,7 +6,7 @@ public class BattleCalculator : MonoBehaviour {
 	// 敵攻撃時のプレイヤー側ダメージ計算
 	public static int GetPlayerDamage(PlayerModel player, MagicModel magic, EnemyModel enemy) {
 		// TODO:計算式記述
-		return 30;
+		return 15;
 	}
 
 	// プレイヤー攻撃時の敵側ダメージ計算

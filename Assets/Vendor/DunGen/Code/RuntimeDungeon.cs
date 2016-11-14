@@ -29,6 +29,10 @@ namespace DunGen
 				Generator.Root = Root;
 
 			Generator.Generate();
+
+			// 追加処理 ダンジョン生成終了後にシーンの初期処理を行う
+			DungeonInitializer initializer = GetComponent<DungeonInitializer>();
+			initializer.Initialize();
 		}
 
 		protected virtual void OnDungeonGenerationStatusChanged(DungeonGenerator generator, GenerationStatus status)

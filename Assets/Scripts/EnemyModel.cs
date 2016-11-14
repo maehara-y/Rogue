@@ -3,33 +3,33 @@ using System.Collections;
 
 public class EnemyModel : MonoBehaviour {
 
-	public int id { get; set; }
-	public string enemyName { get; set; }
-	public string prefabName { get; set; }
-	public string attackParticleName { get; set; }
-	public int type { get; set; }
-	public int attribute { get; set; }
-	public int maxHp { get; set; }
-	public int hp { get; set; }
-	public int atk { get; set; }
-	public int def { get; set; }
-	public int dex { get; set; }
-	public int agi { get; set; }
-	public int skillGroupId { get; set; }	// TODO:どうする？
-	public int pattern_id { get; set; }	// TODO:どうする？
-	public float moveSpeed { get; set; }
-	public float chaseRange { get; set; }
-	public int exp { get; set; }
-	public int dropItemGroupId { get; set; }
+	[SerializeField] public int id { get; set; }
+	[SerializeField] public string enemyName { get; set; }
+	[SerializeField] public string prefabName { get; set; }
+	[SerializeField] public string attackParticleName { get; set; }
+	[SerializeField] public int type { get; set; }
+	[SerializeField] public int attribute { get; set; }
+	[SerializeField] public int maxHp { get; set; }
+	[SerializeField] public int hp { get; set; }
+	[SerializeField] public int atk { get; set; }
+	[SerializeField] public int def { get; set; }
+	[SerializeField] public int dex { get; set; }
+	[SerializeField] public int agi { get; set; }
+	[SerializeField] public int skillGroupId { get; set; }	// TODO:どうする？
+	[SerializeField] public int pattern_id { get; set; }	// TODO:どうする？
+	[SerializeField] public float moveSpeed { get; set; }
+	[SerializeField] public float chaseRange { get; set; }
+	[SerializeField] public int exp { get; set; }
+	[SerializeField] public int dropItemGroupId { get; set; }
 
-	void Start() {
+	public void Initialize() {
 		// TODO:実際はフロア階層(マスター)から対象のモンスター(マスター)とLvを出し、それに基づいたステータスをセットする
 		SetTestData();
 	}
 
 	void SetTestData() {
 		enemyName = "スケルトン";
-		prefabName = "Skelton";
+		prefabName = "Skeleton";
 		attackParticleName = "EnemyAttack/double-slash";
 		type = 1;
 		attribute = 0;
