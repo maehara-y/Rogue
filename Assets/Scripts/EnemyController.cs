@@ -11,6 +11,7 @@ public class EnemyController : MonoBehaviour {
 	private CharacterController controller;
 	private Animator animator;
 	private EnemyModel enemyModel;
+	private PlayerController playerController;
 
 	private bool isDead = false;
 	private bool isAttack = false;
@@ -33,7 +34,7 @@ public class EnemyController : MonoBehaviour {
 		
 		// TODO:パフォーマンス的に一定時間おきにやったほうがよさそう
 		if (target)	{
-			if (target.GetComponent<PlayerController>().isDead) return;
+			if (playerController.isDead) return;
 
 			transform.LookAt(target.transform);
 			float distance = Vector3.Distance(transform.position, target.transform.position);
@@ -74,14 +75,18 @@ public class EnemyController : MonoBehaviour {
 
 	// 索敵用の衝突判定 (範囲内に入ったらプレイヤーを追跡対象とする)
 	void OnTriggerEnter(Collider col) {
-		if (col.gameObject.tag == "PlayerTag") target = col.gameObject;
+		if (col.gameObject.tag == "PlayerTag") {
+			target = col.gameObject;
+			playerController = target.GetComponent<PlayerController>();
+		}
 	}
 
 	// ダメージ用の衝突判定
 	void OnCollisionEnter(Collision col) {
 		GameObject magic = col.gameObject;
 		if (isDead || magic.tag != "PlayerAttackTag") return;
-		if (!magic.GetComponent<ProjectileScript>()) return;
+		ProjectileScript projectile = magic.GetComponent<ProjectileScript>();
+		if (!projectile) return;
 
 		// 魔法がヒットしたらダメージ計算をする
 		GameObject playerObj = GameObject.FindWithTag("PlayerTag");
@@ -89,7 +94,6 @@ public class EnemyController : MonoBehaviour {
 		PlayerController playerController = playerObj.GetComponent<PlayerController>();
 		if (playerController.isDead) return;
 
-		ProjectileScript projectile = magic.GetComponent<ProjectileScript>();
 		int damage = 0;
 		if (BattleCalculator.IsHitEnemy(playerModel, projectile.magicModel, enemyModel)) {
 			damage = BattleCalculator.GetEnemyDamage(playerModel, projectile.magicModel, enemyModel);

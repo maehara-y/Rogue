@@ -8,7 +8,8 @@ public class DungeonInitializer : MonoBehaviour {
 	public GameObject enemyRoot;
 	public Text floorLabel;
 
-	/*void Start() {
+	/* 静的ダンジョンデバッグ用
+	void Start() {
 		Initialize ();
 	}*/
 
