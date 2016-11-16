@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour {
 		magic.SetMagicId(model.currentMagicId);
 		GameObject magicPrefab = (GameObject)Resources.Load(magic.prefabName);
 		GameObject magicObj = Instantiate(magicPrefab, transform.position, transform.rotation) as GameObject;
-		magicObj.transform.parent = battleObjectRoot.transform;
+		magicObj.transform.SetParent(battleObjectRoot.transform);
 		MagicController magicController = magicObj.GetComponent<MagicController>();
 		magicController.Initialize();
 		magicController.magicModel = magic;
@@ -142,7 +142,7 @@ public class PlayerController : MonoBehaviour {
 			magicObj.SetActive(true);
 
 			Vector3 pos = transform.position + transform.forward * 2;
-			pos.y += 1.5f;
+			pos.y += 1.8f;
 			magicObj.transform.position = pos;
 			magicObj.transform.rotation = transform.rotation;
 			magicObj.GetComponent<MagicController>().Shot();

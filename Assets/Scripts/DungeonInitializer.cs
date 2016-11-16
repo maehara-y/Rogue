@@ -8,10 +8,10 @@ public class DungeonInitializer : MonoBehaviour {
 	public GameObject enemyRoot;
 	public Text floorLabel;
 
-	/* 静的ダンジョンデバッグ用
+	//静的ダンジョンデバッグ用
 	void Start() {
 		Initialize ();
-	}*/
+	}
 
 	// Use this for initialization
 	public void Initialize () {
@@ -55,7 +55,7 @@ public class DungeonInitializer : MonoBehaviour {
 			GameObject enemyPrefab = (GameObject)Resources.Load(prefabName);
 			GameObject enemyObj = Instantiate(enemyPrefab, room.transform.position, room.transform.rotation) as GameObject;
 			enemyObj.GetComponent<EnemyController>().Initialize();
-			enemyObj.transform.parent = enemyRoot.transform;
+			enemyObj.transform.SetParent(enemyRoot.transform);
 		}
 	}
 }

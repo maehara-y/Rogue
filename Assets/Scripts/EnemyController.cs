@@ -25,7 +25,7 @@ public class EnemyController : MonoBehaviour {
 
 		// TODO:Findは遅いので変える
 		GameObject enemyRoot = GameObject.Find("Enemy");
-		transform.parent = enemyRoot.transform;
+		transform.SetParent(enemyRoot.transform);
 	}
 
 	// Update is called once per frame

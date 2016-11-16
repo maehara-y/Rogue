@@ -6,18 +6,18 @@ public class MagicController : MonoBehaviour {
 	public GameObject shotParticle;
 	public GameObject impactParticle;
 	public MagicModel magicModel { get; set;}	// ヒット後のダメージ計算に利用？
-	private Rigidbody rigidbody;
+	public Rigidbody rigidbody;
 
 	// 初期処理
 	public void Initialize() {
 		rigidbody = gameObject.GetComponent<Rigidbody>();
 
 		shotParticle = Instantiate(shotParticle, transform.position, transform.rotation) as GameObject;
-		shotParticle.transform.parent = transform;
+		shotParticle.transform.SetParent(transform);
 		shotParticle.SetActive(false);
 
 		impactParticle = Instantiate (impactParticle, transform.position, Quaternion.FromToRotation (Vector3.up, transform.position)) as GameObject;
-		impactParticle.transform.parent = transform;
+		impactParticle.transform.SetParent(transform);
 		impactParticle.SetActive(false);
 	}
 
@@ -27,7 +27,7 @@ public class MagicController : MonoBehaviour {
 		shotParticle.SetActive(true);
 		shotParticle.transform.position = transform.position;
 		shotParticle.transform.rotation = transform.rotation;
-		shotParticle.transform.parent = transform;
+		shotParticle.transform.SetParent(transform);
 		foreach (Transform shotChild in shotParticle.transform) {
 			shotChild.gameObject.SetActive(true);
 			ParticleSystem childParticle = shotChild.gameObject.GetComponent<ParticleSystem>();
@@ -38,6 +38,7 @@ public class MagicController : MonoBehaviour {
 	}
 	
 	void OnCollisionEnter(Collision hit) {
+		gameObject.SetActive(true);
 		StartCoroutine(impact());
 	}
 
