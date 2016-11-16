@@ -7,7 +7,7 @@ public class EnemyModel : MonoBehaviour {
 	[SerializeField] public string enemyName { get; set; }
 	[SerializeField] public string prefabName { get; set; }
 	[SerializeField] public string attackParticleName { get; set; }
-	[SerializeField] public int type { get; set; }
+	[SerializeField] public int enemyType { get; set; }
 	[SerializeField] public int attribute { get; set; }
 	[SerializeField] public int maxHp { get; set; }
 	[SerializeField] public int hp { get; set; }
@@ -31,7 +31,7 @@ public class EnemyModel : MonoBehaviour {
 		enemyName = "スケルトン";
 		prefabName = "Skeleton";
 		attackParticleName = "EnemyAttack/double-slash";
-		type = 1;
+		enemyType = 1;
 		attribute = 0;
 		maxHp = 200;
 		hp = 200;

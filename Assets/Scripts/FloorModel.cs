@@ -5,7 +5,7 @@ public class FloorModel : MonoBehaviour {
 
 	[SerializeField] public int id { get; set; }
 	[SerializeField] public int floor_number { get; set; }
-	[SerializeField] public int type { get; set; }
+	[SerializeField] public int floorType { get; set; }
 	[SerializeField] public int is_stairs { get; set; }
 	[SerializeField] public int room_length { get; set; }
 	[SerializeField] public int branch_count { get; set; }

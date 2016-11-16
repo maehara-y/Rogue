@@ -85,8 +85,8 @@ public class EnemyController : MonoBehaviour {
 	void OnCollisionEnter(Collision col) {
 		GameObject magic = col.gameObject;
 		if (isDead || magic.tag != "PlayerAttackTag") return;
-		ProjectileScript projectile = magic.GetComponent<ProjectileScript>();
-		if (!projectile) return;
+		MagicController magicController = magic.GetComponent<MagicController>();
+		if (!magicController) return;
 
 		// 魔法がヒットしたらダメージ計算をする
 		GameObject playerObj = GameObject.FindWithTag("PlayerTag");
@@ -95,8 +95,8 @@ public class EnemyController : MonoBehaviour {
 		if (playerController.isDead) return;
 
 		int damage = 0;
-		if (BattleCalculator.IsHitEnemy(playerModel, projectile.magicModel, enemyModel)) {
-			damage = BattleCalculator.GetEnemyDamage(playerModel, projectile.magicModel, enemyModel);
+		if (BattleCalculator.IsHitEnemy(playerModel, magicController.magicModel, enemyModel)) {
+			damage = BattleCalculator.GetEnemyDamage(playerModel, magicController.magicModel, enemyModel);
 		}
 
 		// ダメージを受ける。HPが0以下になったら死ぬ。

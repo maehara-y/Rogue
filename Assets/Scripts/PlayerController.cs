@@ -43,7 +43,6 @@ public class PlayerController : MonoBehaviour {
 
 	// 魔法の生成 (シーンの初期処理でストックを作っておく)
 	void GenerateMagic() {
-		// TODO:魔法を切り替えた場合は破棄(Destroy)する
 		// TODO:以下はショット系魔法の場合。他の魔法には他のクラスを適用する。
 		// モンスター側のcollisionイベントで発動する場合もあれば、効果がここで発動するものもある。
 		// TODO:Resourcesは重いので、全魔法プレハブのリストをpublic変数にinspector上でセットしておく
@@ -51,12 +50,11 @@ public class PlayerController : MonoBehaviour {
 		GameObject magicPrefab = (GameObject)Resources.Load(magic.prefabName);
 		GameObject magicObj = Instantiate(magicPrefab, transform.position, transform.rotation) as GameObject;
 		magicObj.transform.parent = battleObjectRoot.transform;
+		MagicController magicController = magicObj.GetComponent<MagicController>();
+		magicController.Initialize();
+		magicController.magicModel = magic;
 		magicObj.SetActive(false);
 		magicList.Add(magicObj);
-
-		// TODO:ここで衝突時エフェクトも初期化しておく
-		// magicListの中身はKV？でkeyにshotとかimpactとかが入る このキーかエフェクトタイプをマスターのカラムに持つ
-
 	}
 
 	// Update is called once per frame
@@ -135,7 +133,7 @@ public class PlayerController : MonoBehaviour {
 		DisplayStatus();
 
 		// TODO:あとでenumでtype定義
-		if (magic.type == 1) {
+		if (magic.magicType == 1) {
 			this.animator.SetBool(magic.animationName, true);
 			yield return new WaitForSeconds(1f);
 
@@ -144,12 +142,10 @@ public class PlayerController : MonoBehaviour {
 			magicObj.SetActive(true);
 
 			Vector3 pos = transform.position + transform.forward * 2;
-			pos.y += 2;
+			pos.y += 1.5f;
 			magicObj.transform.position = pos;
 			magicObj.transform.rotation = transform.rotation;
-			magicObj.GetComponent<Rigidbody>().AddForce(magicObj.transform.forward * magic.speed);
-			magicObj.GetComponent<ProjectileScript>().impactNormal = pos;
-			magicObj.GetComponent<ProjectileScript>().magicModel = magic;
+			magicObj.GetComponent<MagicController>().Shot();
 		}
 	}
 

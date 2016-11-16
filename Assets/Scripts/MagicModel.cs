@@ -4,12 +4,12 @@ using System.Collections;
 public class MagicModel : MonoBehaviour {
 
 	[SerializeField] public int id { get; set; }
+	[SerializeField] public int magicType { get; set; }
 	[SerializeField] public string magicName { get; set; }
 	[SerializeField] public string prefabName { get; set; }
 	[SerializeField] public string animationName { get; set; }
 	[SerializeField] public string description { get; set; }
 	[SerializeField] public float masterRate { get; set; }
-	[SerializeField] public int type { get; set; }
 	[SerializeField] public int useMp { get; set; }
 	[SerializeField] public int attribute { get; set; }
 	[SerializeField] public int effectValue { get; set; }
@@ -27,7 +27,7 @@ public class MagicModel : MonoBehaviour {
 		animationName = "MeleeAttack01";
 		description = "炎の弾を放ちます";
 		masterRate = 0.25f;
-		type = 1;
+		magicType = 1;
 		useMp = 5;
 		attribute = 1;
 		effectValue = 100;
