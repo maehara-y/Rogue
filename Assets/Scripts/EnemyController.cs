@@ -5,6 +5,8 @@ using System.Collections;
 public class EnemyController : MonoBehaviour {
 
 	public float speed = 3.0f;
+	public Text nameLabel;
+	public Slider hpSlider;
 
 	private GameObject target;	// プレイヤーのこと
 	//private NavMeshAgent agent;
@@ -22,6 +24,11 @@ public class EnemyController : MonoBehaviour {
 		animator = GetComponent<Animator>();
 		enemyModel = GetComponent<EnemyModel>();
 		enemyModel.Initialize();
+
+		// TODO:レベル算出と表示
+		string lv = "15";
+		nameLabel.text = "Lv" + lv + " " + enemyModel.enemyName;
+		hpSlider.value = 1.0f;
 
 		// TODO:Findは遅いので変える
 		GameObject enemyRoot = GameObject.Find("Enemy");
@@ -102,6 +109,7 @@ public class EnemyController : MonoBehaviour {
 		// ダメージを受ける。HPが0以下になったら死ぬ。
 		if (enemyModel.hp < damage) {
 			enemyModel.hp = 0;
+			hpSlider.value = 0f;
 			isDead = true;
 			// 経験値を獲得
 			playerModel.AddExp(enemyModel.exp);
@@ -110,6 +118,7 @@ public class EnemyController : MonoBehaviour {
 			StartCoroutine(Die());
 		} else {
 			enemyModel.hp -= damage;
+			hpSlider.value = (float)enemyModel.hp / enemyModel.maxHp;
 			animator.SetBool("Damage", true);
 			// TODO:被弾後、waitの時間を少し作りたい
 		}
