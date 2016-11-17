@@ -1,10 +1,9 @@
 fileFormatVersion: 2
-guid: 9bd71744fb3a0410597cdbd92968b56b
-timeCreated: 1479178487
+guid: 859e978b4404a4c7291a509005126174
+timeCreated: 1479385782
 licenseType: Free
 TextureImporter:
-  fileIDToRecycleName:
-    8900000: generatedCubemap
+  fileIDToRecycleName: {}
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -22,38 +21,42 @@ TextureImporter:
     normalMapFilter: 0
   isReadable: 0
   grayScaleToAlpha: 0
-  generateCubemap: 6
-  cubemapConvolution: 1
+  generateCubemap: 0
+  cubemapConvolution: 0
   cubemapConvolutionSteps: 7
   cubemapConvolutionExponent: 1.5
-  seamlessCubemap: 1
-  textureFormat: -1
+  seamlessCubemap: 0
+  textureFormat: 4
   maxTextureSize: 2048
   textureSettings:
-    filterMode: 2
-    aniso: 0
+    filterMode: 0
+    aniso: 16
     mipBias: 0
     wrapMode: 1
-  nPOTScale: 1
+  nPOTScale: 0
   lightmap: 0
   rGBM: 0
-  compressionQuality: 100
+  compressionQuality: 50
   allowsAlphaSplitting: 0
-  spriteMode: 0
+  spriteMode: 3
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 100
-  alphaIsTransparency: 0
+  spritePixelsToUnits: 4
+  alphaIsTransparency: 1
   spriteTessellationDetail: -1
-  textureType: 3
+  textureType: 8
   buildTargetSettings: []
   spriteSheet:
     serializedVersion: 2
     sprites: []
-    outline: []
+    outline:
+    - - {x: -2, y: -2}
+      - {x: -2, y: 2}
+      - {x: 2, y: 2}
+      - {x: 2, y: -2}
   spritePackingTag: 
   userData: 
   assetBundleName: 

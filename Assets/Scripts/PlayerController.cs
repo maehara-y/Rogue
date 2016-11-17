@@ -6,42 +6,60 @@ using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour {
 
+	// 物理制御系
 	public float speed = 3.0f;
 	public float rotateSpeed = 6.0f;
 	public float gravity = 20.0f;
+	private Vector3 moveDirection = Vector3.zero;
+	private CharacterController controller;	
+	private Animator animator;
+
+	// UI系
 	public Text lvText;
 	public Text hpMpText;
 	public Slider hpBar;
 	public Slider mpBar;
+	public Button magicSettingButton;
+	private Text magicSettingText;
+	public Button itemSettingButton;
+	private Text itemSettingText;
 	public Text gameOver;
+	public GameObject battleObjectRoot;
+
+	// 状態制御系
 	public bool isDead = false;
 	public bool isDamage = false;
-	public GameObject battleObjectRoot;
-	public List<GameObject> magicList;
 
-	private Vector3 moveDirection = Vector3.zero;
-	private CharacterController controller;	
-	private Animator animator;
-	private PlayerModel model;
-	private MagicModel magic;
+	// パラメータ系
+	private PlayerModel playerModel;
+	private MagicModel magicModel;
+	private ItemModel itemModel;
+	private List<MagicModel> settableMagics;
+	private List<GameObject> magicInstances;
+	private List<ItemModel> settableItems;
+	private int usableMagicIndex = 0;
 	private int maxMagicIndex = 5;
 	private int currentMagicIndex = 0;
+	private int usableItemIndex = 0;
+
 	// TODO:Input一時処理
 	private bool isForward = false;
 	private bool isBack = false;
 	private bool isLeft = false;
 	private bool isRight = false;
 
+	// 初期処理
 	public void Initialize() {
 		controller = GetComponent<CharacterController>();
 		animator = GetComponent<Animator>();
-		model = GetComponent<PlayerModel>();
-		model.Initialize();
-		magicList = new List<GameObject>();
-		magic = GetComponent<MagicModel>();
+		playerModel = GetComponent<PlayerModel>();
+		playerModel.Initialize();
+		magicInstances = new List<GameObject>();
+		magicModel = GetComponent<MagicModel>();
 		for (int i = 0; i < maxMagicIndex; i++) {
 			GenerateMagic();
 		}
+		DisplayStatus();
 	}
 
 	// 魔法の生成 (シーンの初期処理でストックを作っておく)
@@ -49,23 +67,20 @@ public class PlayerController : MonoBehaviour {
 		// TODO:以下はショット系魔法の場合。他の魔法には他のクラスを適用する。
 		// モンスター側のcollisionイベントで発動する場合もあれば、効果がここで発動するものもある。
 		// TODO:Resourcesは重いので、全魔法プレハブのリストをpublic変数にinspector上でセットしておく
-		magic.SetMagicId(model.currentMagicId);
-		GameObject magicPrefab = (GameObject)Resources.Load(magic.prefabName);
+		magicModel.SetMagicId(playerModel.currentMagicId);
+		GameObject magicPrefab = (GameObject)Resources.Load(magicModel.prefabName);
 		GameObject magicObj = Instantiate(magicPrefab, transform.position, transform.rotation) as GameObject;
 		magicObj.transform.SetParent(battleObjectRoot.transform);
 		MagicController magicController = magicObj.GetComponent<MagicController>();
 		magicController.Initialize();
-		magicController.magicModel = magic;
+		magicController.magicModel = magicModel;
 		magicObj.SetActive(false);
-		magicList.Add(magicObj);
+		magicInstances.Add(magicObj);
 	}
 
 	// Update is called once per frame
 	void Update () {
 		if (isDead || isDamage) return;
-		
-		// TODO:Start関数内だと反映されず。とはいえUpdate内はよくないのであとで修正
-		DisplayStatus();
 
 		// 移動
 		if (controller.isGrounded) {
@@ -103,17 +118,20 @@ public class PlayerController : MonoBehaviour {
 
 	// ステータス表示
 	public void DisplayStatus() {
-		lvText.text = "Lv." + model.lv + "　　　　Exp " + model.exp + "\nHP\nMP";
-		hpMpText.text = model.hp + "/" + model.maxHp + "\n" + model.mp + "/" + model.maxMp;
-		hpBar.value = (float)model.hp / model.maxHp;
-		mpBar.value = (float)model.mp / model.maxMp;
-		//"   魔法:" + magic.magicName; 
+		lvText.text = "Lv." + playerModel.lv + "　　　　Exp " + playerModel.exp + "\nHP\nMP";
+		hpMpText.text = playerModel.hp + "/" + playerModel.maxHp + "\n" + playerModel.mp + "/" + playerModel.maxMp;
+		hpBar.value = (float)playerModel.hp / playerModel.maxHp;
+		mpBar.value = (float)playerModel.mp / playerModel.maxMp;
+		magicSettingText = magicSettingButton.GetComponent<Text>();
+		magicSettingText.text = (magicModel) ? magicModel.magicName : "";
+		itemSettingText = itemSettingButton.GetComponent<Text>();
+		itemSettingText.text = (itemModel) ? itemModel.itemName : "";
 	}
 
 	// ダメージを受ける
 	IEnumerator Damage(int damage) {
 		isDamage = true;
-		model.hp -= damage;
+		playerModel.hp -= damage;
 		animator.SetTrigger("TakeDamage");
 		yield return new WaitForSeconds(1f);
 		isDamage = false;
@@ -121,7 +139,7 @@ public class PlayerController : MonoBehaviour {
 
 	// 戦闘不能によりゲームオーバー
 	IEnumerator Die() {
-		model.hp = 0;
+		playerModel.hp = 0;
 		isDead = true;
 		animator.SetTrigger("Die");
 		gameOver.text = "Game Over";
@@ -135,16 +153,16 @@ public class PlayerController : MonoBehaviour {
 	// 攻撃 (魔法の使用)
 	IEnumerator Attack() {
 		// MPが足りなければ使えない
-		if (model.mp < magic.useMp) yield break;
-		model.mp -= magic.useMp;
+		if (playerModel.mp < magicModel.useMp) yield break;
+		playerModel.mp -= magicModel.useMp;
 		DisplayStatus();
 
 		// TODO:あとでenumでtype定義
-		if (magic.magicType == 1) {
-			this.animator.SetBool(magic.animationName, true);
+		if (magicModel.magicType == 1) {
+			this.animator.SetBool(magicModel.animationName, true);
 			yield return new WaitForSeconds(1f);
 
-			GameObject magicObj = magicList[currentMagicIndex];
+			GameObject magicObj = magicInstances[currentMagicIndex];
 			currentMagicIndex = (currentMagicIndex < maxMagicIndex-1) ? currentMagicIndex+1 : 0;
 			magicObj.SetActive(true);
 
@@ -160,14 +178,15 @@ public class PlayerController : MonoBehaviour {
 	void OnTriggerEnter(Collider col) {
 		if (col.gameObject.tag != "EnemyAttackTag") return;
 
+		// ダメージ計算
 		EnemyAttack enemyAttack = col.gameObject.GetComponent<EnemyAttack>();
 		int damage = 0;
-		if (BattleCalculator.IsHitPlayer(model, magic, enemyAttack.enemyModel)) {
-			damage = BattleCalculator.GetPlayerDamage(model, magic, enemyAttack.enemyModel);
+		if (BattleCalculator.IsHitPlayer(playerModel, magicModel, enemyAttack.enemyModel)) {
+			damage = BattleCalculator.GetPlayerDamage(playerModel, magicModel, enemyAttack.enemyModel);
 		}
 
 		// HPが0以下になったら死ぬ
-		if (model.hp <= damage) {
+		if (playerModel.hp <= damage) {
 			StartCoroutine(Die());
 		} else {
 			StartCoroutine(Damage(damage));

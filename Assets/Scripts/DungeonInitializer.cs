@@ -10,9 +10,9 @@ public class DungeonInitializer : MonoBehaviour {
 	public Text floorLabel;
 
 	//静的ダンジョンデバッグ用
-	void Start() {
+	/*void Start() {
 		Initialize ();
-	}
+	}*/
 
 	// Use this for initialization
 	public void Initialize () {
