@@ -7,6 +7,7 @@ public class EnemyController : MonoBehaviour {
 	public float speed = 3.0f;
 	public Text nameLabel;
 	public Slider hpSlider;
+	public GameObject battleObjectRoot;
 
 	private GameObject target;	// プレイヤーのこと
 	//private NavMeshAgent agent;
@@ -73,8 +74,10 @@ public class EnemyController : MonoBehaviour {
 		Vector3 hitEffectPosition = transform.position + transform.forward * 2;
 		hitEffectPosition.y += 1;
 		GameObject attackPrefab = (GameObject)Resources.Load(enemyModel.attackParticleName);
+		// TODO:InstantiateはここではなくInitialize時に行ってプールしておく
 		GameObject attackParticle = Instantiate(attackPrefab, hitEffectPosition, Quaternion.identity) as GameObject;
 		attackParticle.GetComponent<EnemyAttack>().enemyModel = enemyModel;
+		attackParticle.transform.SetParent(battleObjectRoot.transform);
 
 		yield return new WaitForSeconds(1f);
 		isAttack = false;

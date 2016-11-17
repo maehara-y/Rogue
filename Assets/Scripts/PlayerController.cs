@@ -9,7 +9,10 @@ public class PlayerController : MonoBehaviour {
 	public float speed = 3.0f;
 	public float rotateSpeed = 6.0f;
 	public float gravity = 20.0f;
-	public Text playerStatus;
+	public Text lvText;
+	public Text hpMpText;
+	public Slider hpBar;
+	public Slider mpBar;
 	public Text gameOver;
 	public bool isDead = false;
 	public bool isDamage = false;
@@ -100,7 +103,11 @@ public class PlayerController : MonoBehaviour {
 
 	// ステータス表示
 	public void DisplayStatus() {
-		playerStatus.text = "Lv:" + model.lv + "   exp:" + model.exp + "   HP:" + model.hp + "/" + model.maxHp + "   MP:" + model.mp + "/" + model.maxMp + "   魔法:" + magic.magicName; 
+		lvText.text = "Lv." + model.lv + "　　　　Exp " + model.exp + "\nHP\nMP";
+		hpMpText.text = model.hp + "/" + model.maxHp + "\n" + model.mp + "/" + model.maxMp;
+		hpBar.value = (float)model.hp / model.maxHp;
+		mpBar.value = (float)model.mp / model.maxMp;
+		//"   魔法:" + magic.magicName; 
 	}
 
 	// ダメージを受ける

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class DungeonInitializer : MonoBehaviour {
 
 	public GameObject enemyRoot;
+	public GameObject battleObjectRoot;
 	public Text floorLabel;
 
 	//静的ダンジョンデバッグ用
@@ -54,7 +55,9 @@ public class DungeonInitializer : MonoBehaviour {
 			string prefabName = "Enemy/Skeleton";
 			GameObject enemyPrefab = (GameObject)Resources.Load(prefabName);
 			GameObject enemyObj = Instantiate(enemyPrefab, room.transform.position, room.transform.rotation) as GameObject;
-			enemyObj.GetComponent<EnemyController>().Initialize();
+			EnemyController enemyController = enemyObj.GetComponent<EnemyController>();
+			enemyController.battleObjectRoot = battleObjectRoot;
+			enemyController.Initialize();
 			enemyObj.transform.SetParent(enemyRoot.transform);
 		}
 	}
