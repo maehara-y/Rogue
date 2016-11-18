@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class PlayerModel : MonoBehaviour {
+public class PlayerModel {
 
 	[SerializeField] public int id { get; set; }
 	[SerializeField] public int avatarColor { get; set; }
@@ -21,10 +22,15 @@ public class PlayerModel : MonoBehaviour {
 	[SerializeField] public int shieldId { get; set; }
 	[SerializeField] public int armorId { get; set; }
 	[SerializeField] public int accessaryId { get; set; }
-	[SerializeField] public int currentMagicId { get; set; }
-	[SerializeField] public int currentItemId { get; set; }
+	[SerializeField] public int[] settableMagicIds { get; set; }
+	[SerializeField] public int[] settableItemIds { get; set; }
+	[SerializeField] public int usableMagicIndex { get; set; }
+	[SerializeField] public int usableItemIndex { get; set; }
 	[SerializeField] public int itemSlotCount { get; set; }
 	[SerializeField] public int money { get; set; }
+
+	[SerializeField] public List<MagicModel> settableMagics;
+
 
 	public void Initialize() {
 		// TODO:実際は初期値はマスターデータから取得し、以降はPlayerPrefsから取得する
@@ -61,7 +67,16 @@ public class PlayerModel : MonoBehaviour {
 		shieldId = 234;
 		armorId = 345;
 		accessaryId = 456;
-		currentMagicId = 111;
-		currentItemId = 222;
+		settableMagicIds = new int[] {1, 2, 3};
+		settableItemIds = new int[] {1, 2, 3};
+		usableMagicIndex = 0;
+		usableItemIndex = 0;
+
+		// TODO:セット中魔法IDリストを取得し、そこからそれぞれのmodelをマスターから取得する
+		settableMagics = MagicQuery.findByIds(settableMagicIds);
 	}
+
+	public MagicModel GetUsableMagic() {
+		return settableMagics[usableMagicIndex];
+	} 
 }

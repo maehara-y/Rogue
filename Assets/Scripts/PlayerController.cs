@@ -31,16 +31,10 @@ public class PlayerController : MonoBehaviour {
 	public bool isDamage = false;
 
 	// パラメータ系
-	private PlayerModel playerModel;
-	private MagicModel magicModel;
-	private ItemModel itemModel;
-	private List<MagicModel> settableMagics;
-	private List<GameObject> magicInstances;
-	private List<ItemModel> settableItems;
-	private int usableMagicIndex = 0;
+	public PlayerModel playerModel;
+	private List<List<GameObject>> magicInstances;
 	private int maxMagicIndex = 5;
-	private int currentMagicIndex = 0;
-	private int usableItemIndex = 0;
+	private int magicInstanceIndex = 0;
 
 	// TODO:Input一時処理
 	private bool isForward = false;
@@ -52,30 +46,40 @@ public class PlayerController : MonoBehaviour {
 	public void Initialize() {
 		controller = GetComponent<CharacterController>();
 		animator = GetComponent<Animator>();
-		playerModel = GetComponent<PlayerModel>();
+		playerModel = new PlayerModel();
 		playerModel.Initialize();
-		magicInstances = new List<GameObject>();
-		magicModel = GetComponent<MagicModel>();
-		for (int i = 0; i < maxMagicIndex; i++) {
-			GenerateMagic();
+
+		magicInstances = new List<List<GameObject>>();
+		for (int i = 0; i < playerModel.settableMagics.Count; i++) {
+			for (int j = 0; j < maxMagicIndex; j++) {
+				GenerateMagic(i);
+			}
 		}
 		DisplayStatus();
 	}
 
 	// 魔法の生成 (シーンの初期処理でストックを作っておく)
-	void GenerateMagic() {
+	void GenerateMagic(int magicIndex) {
+		// TODO:Resourcesは重いので、全魔法プレハブのリストをpublic変数にinspector上でセットしておく
 		// TODO:以下はショット系魔法の場合。他の魔法には他のクラスを適用する。
 		// モンスター側のcollisionイベントで発動する場合もあれば、効果がここで発動するものもある。
-		// TODO:Resourcesは重いので、全魔法プレハブのリストをpublic変数にinspector上でセットしておく
-		magicModel.SetMagicId(playerModel.currentMagicId);
-		GameObject magicPrefab = (GameObject)Resources.Load(magicModel.prefabName);
+		MagicModel targetMagic = playerModel.settableMagics[magicIndex];
+		GameObject magicPrefab = (GameObject)Resources.Load(targetMagic.prefabName);
 		GameObject magicObj = Instantiate(magicPrefab, transform.position, transform.rotation) as GameObject;
 		magicObj.transform.SetParent(battleObjectRoot.transform);
 		MagicController magicController = magicObj.GetComponent<MagicController>();
 		magicController.Initialize();
-		magicController.magicModel = magicModel;
+		magicController.magicModel = targetMagic;
 		magicObj.SetActive(false);
-		magicInstances.Add(magicObj);
+
+		// インスタンスプールに入れる
+		if (magicInstances.Count > magicIndex) {
+			magicInstances[magicIndex].Add(magicObj);
+		} else {
+			List<GameObject> magicList = new List<GameObject>();
+			magicList.Add(magicObj);
+			magicInstances.Add(magicList);
+		}
 	}
 
 	// Update is called once per frame
@@ -122,10 +126,13 @@ public class PlayerController : MonoBehaviour {
 		hpMpText.text = playerModel.hp + "/" + playerModel.maxHp + "\n" + playerModel.mp + "/" + playerModel.maxMp;
 		hpBar.value = (float)playerModel.hp / playerModel.maxHp;
 		mpBar.value = (float)playerModel.mp / playerModel.maxMp;
-		magicSettingText = magicSettingButton.GetComponent<Text>();
-		magicSettingText.text = (magicModel) ? magicModel.magicName : "";
-		itemSettingText = itemSettingButton.GetComponent<Text>();
-		itemSettingText.text = (itemModel) ? itemModel.itemName : "";
+		MagicModel usableMagic = playerModel.GetUsableMagic();
+		magicSettingText = magicSettingButton.GetComponentInChildren<Text>();
+		magicSettingText.text = (usableMagic != null) ? usableMagic.magicName : "";
+		/* TODO:
+		ItemModel usableItem = playerModel.GetUsableItem();
+		itemSettingText = itemSettingButton.GetComponentInChildren<Text>();
+		itemSettingText.text = (usableItem != null) ? usableItem.itemName : "アイテム切り替え";*/
 	}
 
 	// ダメージを受ける
@@ -150,24 +157,32 @@ public class PlayerController : MonoBehaviour {
 		SceneManager.LoadScene("Dungeon");
 	}
 
+	// 魔法の切り替え
+	public void SwitchMagic() {
+		int currentIndex = playerModel.usableMagicIndex;
+		playerModel.usableMagicIndex = (currentIndex + 1 >= playerModel.settableMagics.Count) ? 0 : currentIndex + 1;
+		DisplayStatus();
+	}
+
 	// 攻撃 (魔法の使用)
 	IEnumerator Attack() {
 		// MPが足りなければ使えない
-		if (playerModel.mp < magicModel.useMp) yield break;
-		playerModel.mp -= magicModel.useMp;
+		MagicModel usableMagic = playerModel.GetUsableMagic();
+		if (playerModel.mp < usableMagic.useMp) yield break;
+		playerModel.mp -= usableMagic.useMp;
 		DisplayStatus();
 
 		// TODO:あとでenumでtype定義
-		if (magicModel.magicType == 1) {
-			this.animator.SetBool(magicModel.animationName, true);
+		if (usableMagic.magicType == 1) {
+			this.animator.SetBool(usableMagic.animationName, true);
 			yield return new WaitForSeconds(1f);
 
-			GameObject magicObj = magicInstances[currentMagicIndex];
-			currentMagicIndex = (currentMagicIndex < maxMagicIndex-1) ? currentMagicIndex+1 : 0;
+			GameObject magicObj = magicInstances[playerModel.usableMagicIndex][magicInstanceIndex];
+			magicInstanceIndex = (magicInstanceIndex < maxMagicIndex-1) ? magicInstanceIndex+1 : 0;
 			magicObj.SetActive(true);
 
 			Vector3 pos = transform.position + transform.forward * 2;
-			pos.y += 1.8f;
+			pos.y += 1.2f;
 			magicObj.transform.position = pos;
 			magicObj.transform.rotation = transform.rotation;
 			magicObj.GetComponent<MagicController>().Shot();
@@ -181,8 +196,9 @@ public class PlayerController : MonoBehaviour {
 		// ダメージ計算
 		EnemyAttack enemyAttack = col.gameObject.GetComponent<EnemyAttack>();
 		int damage = 0;
-		if (BattleCalculator.IsHitPlayer(playerModel, magicModel, enemyAttack.enemyModel)) {
-			damage = BattleCalculator.GetPlayerDamage(playerModel, magicModel, enemyAttack.enemyModel);
+		MagicModel usableMagic = playerModel.GetUsableMagic();
+		if (BattleCalculator.IsHitPlayer(playerModel, usableMagic, enemyAttack.enemyModel)) {
+			damage = BattleCalculator.GetPlayerDamage(playerModel, usableMagic, enemyAttack.enemyModel);
 		}
 
 		// HPが0以下になったら死ぬ

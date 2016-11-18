@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ItemModel : MonoBehaviour {
+public class ItemModel {
 
 	[SerializeField] public int id { get; set; }
 	[SerializeField] public string itemName { get; set; }

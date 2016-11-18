@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyModel : MonoBehaviour {
+public class EnemyModel {
 
 	[SerializeField] public int id { get; set; }
 	[SerializeField] public string enemyName { get; set; }

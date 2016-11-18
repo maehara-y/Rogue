@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MagicModel : MonoBehaviour {
+public class MagicModel {
 
 	[SerializeField] public int id { get; set; }
 	[SerializeField] public int magicType { get; set; }
@@ -21,20 +21,5 @@ public class MagicModel : MonoBehaviour {
 
 	// TODO:実際はマスターデータから取得する
 	public void SetMagicId(int id) {
-		this.id = id;
-		magicName = "ファイアーボール";
-		prefabName = "Magic/FireMissileOBJ";
-		animationName = "MeleeAttack01";
-		description = "炎の弾を放ちます";
-		masterRate = 0.25f;
-		magicType = 1;
-		useMp = 5;
-		attribute = 1;
-		effectValue = 100;
-		targetStatus = 0;
-		firingRange = 12f;		// TODO:未実装
-		speed = 300f;
-		strikeRate = 0.8f;
-		duration = 0;
 	}
 }

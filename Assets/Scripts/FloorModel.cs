@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FloorModel : MonoBehaviour {
+public class FloorModel {
 
 	[SerializeField] public int id { get; set; }
 	[SerializeField] public int floorNumber { get; set; }

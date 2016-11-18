@@ -23,7 +23,7 @@ public class EnemyController : MonoBehaviour {
 		//agent = GetComponent<NavMeshAgent>();
 		controller = GetComponent<CharacterController>();
 		animator = GetComponent<Animator>();
-		enemyModel = GetComponent<EnemyModel>();
+		enemyModel = new EnemyModel();
 		enemyModel.Initialize();
 
 		// TODO:レベル算出と表示
@@ -100,8 +100,8 @@ public class EnemyController : MonoBehaviour {
 
 		// 魔法がヒットしたらダメージ計算をする
 		GameObject playerObj = GameObject.FindWithTag("PlayerTag");
-		PlayerModel playerModel = playerObj.GetComponent<PlayerModel>();
 		PlayerController playerController = playerObj.GetComponent<PlayerController>();
+		PlayerModel playerModel = playerController.playerModel;
 		if (playerController.isDead) return;
 
 		int damage = 0;
