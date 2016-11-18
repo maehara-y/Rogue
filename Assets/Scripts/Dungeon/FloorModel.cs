@@ -6,7 +6,7 @@ public class FloorModel {
 	[SerializeField] public int id { get; set; }
 	[SerializeField] public int floorNumber { get; set; }
 	[SerializeField] public int floorType { get; set; }
-	[SerializeField] public int isStairs { get; set; }
+	[SerializeField] public bool isStairs { get; set; }
 	[SerializeField] public int roomLength { get; set; }
 	[SerializeField] public int branchCount { get; set; }
 	[SerializeField] public int branchLength { get; set; }
@@ -21,17 +21,4 @@ public class FloorModel {
 	[SerializeField] public float maxGimmickRate { get; set; }
 	[SerializeField] public string memo { get; set; }
 
-	/*************************************************************
-	 * 初期処理
-	 *************************************************************/
-	public void Initialize() {
-		// TODO:実際はcurrentFloorIdをキーにマスターから取得する
-		SetTestData();
-	}
-
-	/*************************************************************
-	 * デバッグ用のデータ設定
-	 *************************************************************/
-	void SetTestData() {
-	}
 }

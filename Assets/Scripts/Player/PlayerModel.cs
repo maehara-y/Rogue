@@ -87,6 +87,6 @@ public class PlayerModel {
 		usableItemIndex = 0;
 
 		// TODO:セット中魔法IDリストを取得し、そこからそれぞれのmodelをマスターから取得する
-		settableMagics = MagicQuery.findByIds(settableMagicIds);
+		settableMagics = MagicQuery.FindByIds(settableMagicIds);
 	}
 }

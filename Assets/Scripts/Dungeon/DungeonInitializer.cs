@@ -5,9 +5,11 @@ using System.Collections.Generic;
 
 public class DungeonInitializer : MonoBehaviour {
 
+	public int floorId;
+	public Text floorLabel;
 	public GameObject enemyRoot;
 	public GameObject battleObjectRoot;
-	public Text floorLabel;
+	private FloorModel floorModel;
 
 	//静的ダンジョンデバッグ用
 	/*void Start() {
@@ -27,9 +29,10 @@ public class DungeonInitializer : MonoBehaviour {
 	 * 現在のフロア情報を設定する
 	 *************************************************************/
 	void SettingFloor() {
-		int floor = PlayerPrefs.GetInt("NextFloor");
-		if (floor < 1) floor = 1;
-		this.floorLabel.text = floor.ToString() + "階";
+		floorId = PlayerPrefs.GetInt("NextFloorId");
+		if (floorId < 1) floorId = 1;
+		floorModel = FloorQuery.FindById(floorId);
+		floorLabel.text = floorModel.floorNumber + "階";
 	}
 
 	/*************************************************************
@@ -58,15 +61,19 @@ public class DungeonInitializer : MonoBehaviour {
 			rooms.RemoveAt(randomIndex);
 			//Debug.Log ("room ramdomindex:" + randomIndex + ", x:" + room.transform.position.x + ", y:" + room.transform.position.y + ", z:" + room.transform.position.z);
 
-			// TODO:フロアマスターにあったモンスター情報をマスターから取得する
-			// TODO:Resourcesは重いので、全モンスタープレハブのリストをpublic変数にinspector上でセットしておく
-			string prefabName = "Enemy/Skeleton";
-			GameObject enemyPrefab = (GameObject)Resources.Load(prefabName);
+			// TODO:Resourcesは重いので、全モンスタープレハブのリストをpublic変数にinspector上でセットしておく？
+			// フロア情報から出現モンスターの種類を特定し、フロア階層にあったLevelとステータスを設定する
+			EnemyModel enemyModel = EnemyQuery.ChooseByGroupId(floorModel.enemyGroupId);
+			int enemyLevel = GameCalculator.GetEnemyLevel(floorModel.floorNumber);
+			enemyModel.level = enemyLevel;
+			enemyModel = GameCalculator.GetEnemyStatusByLevel(enemyLevel, enemyModel);
+			GameObject enemyPrefab = (GameObject)Resources.Load(enemyModel.prefabName);
 			GameObject enemyObj = Instantiate(enemyPrefab, room.transform.position, room.transform.rotation) as GameObject;
+			enemyObj.transform.SetParent(enemyRoot.transform);
 			EnemyController enemyController = enemyObj.GetComponent<EnemyController>();
 			enemyController.battleObjectRoot = battleObjectRoot;
+			enemyController.enemyModel = enemyModel;
 			enemyController.Initialize();
-			enemyObj.transform.SetParent(enemyRoot.transform);
 		}
 	}
 }

@@ -17,7 +17,7 @@ public class EnemyController : MonoBehaviour {
 	public GameObject battleObjectRoot;
 
 	// パラメータ系
-	private EnemyModel enemyModel;
+	public EnemyModel enemyModel;
 	private PlayerController playerController;
 
 	// 状態制御系
@@ -31,12 +31,9 @@ public class EnemyController : MonoBehaviour {
 		//agent = GetComponent<NavMeshAgent>();
 		controller = GetComponent<CharacterController>();
 		animator = GetComponent<Animator>();
-		enemyModel = new EnemyModel();
-		enemyModel.Initialize();
 
-		// TODO:レベル算出と表示
-		string lv = "15";
-		nameLabel.text = "Lv" + lv + " " + enemyModel.enemyName;
+		// レベル算出と表示
+		nameLabel.text = "Lv" + enemyModel.level + " " + enemyModel.enemyName;
 		hpSlider.value = 1.0f;
 
 		// TODO:Findは遅いので変える
@@ -49,20 +46,25 @@ public class EnemyController : MonoBehaviour {
 	 *************************************************************/
 	void Update () {
 		if (isDead) return;
-		
-		// TODO:パフォーマンス的に一定時間おきにやったほうがよさそう
-		if (target)	{
-			if (playerController.isDead) return;
 
-			transform.LookAt(target.transform);
-			float distance = Vector3.Distance(transform.position, target.transform.position);
-			if (distance < 3f) {
-				if (!isAttack) StartCoroutine(Attack());
-			} else {
-				//agent.destination = target.transform.position;
-				controller.SimpleMove(transform.forward * this.speed);
-				animator.SetBool("Run", true);
-			}
+		// プレイヤーを追跡する
+		if (target && !playerController.isDead)	Chase();
+	}
+
+	/*************************************************************
+	 * プレイヤーを追跡する
+	 *************************************************************/
+	void Chase() {
+		// TODO: LookAtとdistanceの計算は数秒おきにやる？コルーチンで、isTargetingとかで
+		transform.LookAt(target.transform);
+		float distance = Vector3.Distance(transform.position, target.transform.position);
+		if (distance < enemyModel.chaseRange) {
+			// 一定距離に縮まったら攻撃
+			if (!isAttack) StartCoroutine(Attack());
+		} else {
+			//agent.destination = target.transform.position;
+			controller.SimpleMove(transform.forward * this.speed);
+			animator.SetBool("Run", true);
 		}
 	}
 

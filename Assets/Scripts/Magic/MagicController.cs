@@ -43,13 +43,13 @@ public class MagicController : MonoBehaviour {
 	
 	void OnCollisionEnter(Collision hit) {
 		gameObject.SetActive(true);
-		StartCoroutine(impact());
+		StartCoroutine(Impact());
 	}
 
 	/*************************************************************
 	 * 衝突時のエフェクトを表示する
 	 *************************************************************/
-	IEnumerator impact() {
+	IEnumerator Impact() {
 		shotParticle.SetActive(false);
 		foreach (Transform shotChild in shotParticle.transform) {
 			shotChild.gameObject.SetActive(false);

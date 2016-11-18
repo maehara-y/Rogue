@@ -51,12 +51,14 @@ public class PlayerController : MonoBehaviour {
 		playerModel = new PlayerModel();
 		playerModel.Initialize();
 
+		// 魔法のインスタンスプール処理
 		magicInstances = new List<List<GameObject>>();
 		for (int i = 0; i < playerModel.settableMagics.Count; i++) {
 			for (int j = 0; j < maxMagicInstanceIndex; j++) {
 				GenerateMagic(i);
 			}
 		}
+		// 画面表示更新
 		DisplayStatus();
 	}
 
@@ -152,6 +154,7 @@ public class PlayerController : MonoBehaviour {
 	public void SwitchMagic() {
 		int currentIndex = playerModel.usableMagicIndex;
 		playerModel.usableMagicIndex = (currentIndex + 1 >= playerModel.settableMagics.Count) ? 0 : currentIndex + 1;
+		// 画面表示更新
 		DisplayStatus();
 	}
 
@@ -163,6 +166,7 @@ public class PlayerController : MonoBehaviour {
 		MagicModel usableMagic = playerModel.GetUsableMagic();
 		if (playerModel.mp < usableMagic.useMp) yield break;
 		playerModel.mp -= usableMagic.useMp;
+		// 画面表示更新
 		DisplayStatus();
 
 		// TODO:あとでenumでtype定義
@@ -202,6 +206,7 @@ public class PlayerController : MonoBehaviour {
 		} else {
 			StartCoroutine(Damage(damage));
 		}
+		// 画面表示更新
 		DisplayStatus();
 	}
 

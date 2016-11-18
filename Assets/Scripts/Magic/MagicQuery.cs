@@ -7,7 +7,7 @@ public class MagicQuery {
 	/*************************************************************
 	 * IDから1件のモデルを取得する
 	 *************************************************************/
-	public static MagicModel findById(int id) {
+	public static MagicModel FindById(int id) {
 		// TODO:テスト用
 		MagicModel model = new MagicModel();
 		switch (id) {
@@ -69,7 +69,7 @@ public class MagicQuery {
 	/*************************************************************
 	 * ID配列から複数件のモデルを取得する
 	 *************************************************************/
-	public static List<MagicModel> findByIds(int[] ids) {
+	public static List<MagicModel> FindByIds(int[] ids) {
 		// TODO:テスト用
 		MagicModel model1 = new MagicModel();
 		model1.id = 1;
