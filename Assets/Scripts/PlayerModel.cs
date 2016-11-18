@@ -28,16 +28,20 @@ public class PlayerModel {
 	[SerializeField] public int usableItemIndex { get; set; }
 	[SerializeField] public int itemSlotCount { get; set; }
 	[SerializeField] public int money { get; set; }
-
 	[SerializeField] public List<MagicModel> settableMagics;
 
-
+	/*************************************************************
+	 * 初期処理
+	 *************************************************************/
 	public void Initialize() {
 		// TODO:実際は初期値はマスターデータから取得し、以降はPlayerPrefsから取得する
 		// オブジェクトのまま突っ込めるPlayerPrefs的な仕組みがあったら便利
 		SetTestData();
 	}
 
+	/*************************************************************
+	 * 経験値を加算する
+	 *************************************************************/
 	public void AddExp(int getExp) {
 		int[] lvAndExp = GameCalculator.AddExp(lv, exp, getExp);
 		if (lvAndExp[0] > lv) {
@@ -50,6 +54,16 @@ public class PlayerModel {
 		exp = lvAndExp[1];
 	}
 
+	/*************************************************************
+	 * 使用可能な魔法のモデルを取得する
+	 *************************************************************/
+	public MagicModel GetUsableMagic() {
+		return settableMagics[usableMagicIndex];
+	} 
+
+	/*************************************************************
+	 * デバッグ用のデータ設定
+	 *************************************************************/
 	void SetTestData() {
 		avatarColor = 1;	// TODO:未実装
 		moveSpeed = 3f;		// TODO:未実装
@@ -75,8 +89,4 @@ public class PlayerModel {
 		// TODO:セット中魔法IDリストを取得し、そこからそれぞれのmodelをマスターから取得する
 		settableMagics = MagicQuery.findByIds(settableMagicIds);
 	}
-
-	public MagicModel GetUsableMagic() {
-		return settableMagics[usableMagicIndex];
-	} 
 }

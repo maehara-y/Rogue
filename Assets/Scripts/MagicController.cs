@@ -8,7 +8,9 @@ public class MagicController : MonoBehaviour {
 	public MagicModel magicModel { get; set;}	// ヒット後のダメージ計算に利用？
 	public Rigidbody rigidbody;
 
-	// 初期処理
+	/*************************************************************
+	 * 初期処理
+	 *************************************************************/
 	public void Initialize() {
 		rigidbody = gameObject.GetComponent<Rigidbody>();
 
@@ -21,7 +23,9 @@ public class MagicController : MonoBehaviour {
 		impactParticle.SetActive(false);
 	}
 
-	// 発射時のエフェクト
+	/*************************************************************
+	 * 発射時のエフェクトを表示する
+	 *************************************************************/
 	public void Shot() {
 		// パーティクルの再生
 		shotParticle.SetActive(true);
@@ -42,7 +46,9 @@ public class MagicController : MonoBehaviour {
 		StartCoroutine(impact());
 	}
 
-	// 衝突時のエフェクト
+	/*************************************************************
+	 * 衝突時のエフェクトを表示する
+	 *************************************************************/
 	IEnumerator impact() {
 		shotParticle.SetActive(false);
 		foreach (Transform shotChild in shotParticle.transform) {

@@ -22,11 +22,17 @@ public class EnemyModel {
 	[SerializeField] public int exp { get; set; }
 	[SerializeField] public int dropItemGroupId { get; set; }
 
+	/*************************************************************
+	 * 初期処理
+	 *************************************************************/
 	public void Initialize() {
 		// TODO:実際はフロア階層(マスター)から対象のモンスター(マスター)とLvを出し、それに基づいたステータスをセットする
 		SetTestData();
 	}
 
+	/*************************************************************
+	 * デバッグ用のデータ設定
+	 *************************************************************/
 	void SetTestData() {
 		enemyName = "スケルトン";
 		prefabName = "Skeleton";

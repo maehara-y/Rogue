@@ -19,7 +19,4 @@ public class MagicModel {
 	[SerializeField] public float strikeRate { get; set; }
 	[SerializeField] public int duration { get; set; }
 
-	// TODO:実際はマスターデータから取得する
-	public void SetMagicId(int id) {
-	}
 }

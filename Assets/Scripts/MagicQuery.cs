@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class MagicQuery {
 
+	/*************************************************************
+	 * IDから1件のモデルを取得する
+	 *************************************************************/
 	public static MagicModel findById(int id) {
 		// TODO:テスト用
 		MagicModel model = new MagicModel();
@@ -63,6 +66,9 @@ public class MagicQuery {
 		return model;
 	}
 
+	/*************************************************************
+	 * ID配列から複数件のモデルを取得する
+	 *************************************************************/
 	public static List<MagicModel> findByIds(int[] ids) {
 		// TODO:テスト用
 		MagicModel model1 = new MagicModel();

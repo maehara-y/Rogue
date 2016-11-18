@@ -14,27 +14,35 @@ public class DungeonInitializer : MonoBehaviour {
 		Initialize ();
 	}*/
 
-	// Use this for initialization
+	/*************************************************************
+	* シーン読込時の初期処理 (DunGenのRuntimeDungeonスクリプトの処理終了時に呼ばれる)
+	*************************************************************/
 	public void Initialize () {
 		SettingFloor();
 		GeneratePlayer();
 		GenerateEnemies();
 	}
 
-	// 現在のフロア情報を設定する
+	/*************************************************************
+	 * 現在のフロア情報を設定する
+	 *************************************************************/
 	void SettingFloor() {
 		int floor = PlayerPrefs.GetInt("NextFloor");
 		if (floor < 1) floor = 1;
 		this.floorLabel.text = floor.ToString() + "階";
 	}
 
-	// プレイヤー関連情報の生成
+	/*************************************************************
+	 * プレイヤー関連情報を生成する
+	 *************************************************************/
 	void GeneratePlayer() {
 		GameObject player = GameObject.FindWithTag("PlayerTag");
 		player.GetComponent<PlayerController>().Initialize();
 	}
 
-	// モンスターの生成
+	/*************************************************************
+	 * モンスターを生成する
+	 *************************************************************/
 	void GenerateEnemies() {
 		// 出現数をランダム算出する (コクのあるランダムに)
 		// TODO:実際は部屋数とフロアマスターから割り出す

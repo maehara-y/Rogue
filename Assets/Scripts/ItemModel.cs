@@ -15,11 +15,17 @@ public class ItemModel {
 	[SerializeField] public int usableCount { get; set; }
 	[SerializeField] public string memo { get; set; }
 
+	/*************************************************************
+	 * 初期処理
+	 *************************************************************/
 	public void Initialize() {
 		// TODO:実際はcurrentFloorIdをキーにマスターから取得する
 		SetTestData();
 	}
 
+	/*************************************************************
+	 * デバッグ用のデータ設定
+	 *************************************************************/
 	void SetTestData() {
 		itemName = "ポーション";
 		description = "HPを10回復します";

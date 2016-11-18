@@ -4,21 +4,29 @@ using System.Collections;
 
 public class EnemyController : MonoBehaviour {
 
+	// 物理制御系
 	public float speed = 3.0f;
-	public Text nameLabel;
-	public Slider hpSlider;
-	public GameObject battleObjectRoot;
-
 	private GameObject target;	// プレイヤーのこと
 	//private NavMeshAgent agent;
 	private CharacterController controller;
 	private Animator animator;
+
+	// UI系
+	public Text nameLabel;
+	public Slider hpSlider;
+	public GameObject battleObjectRoot;
+
+	// パラメータ系
 	private EnemyModel enemyModel;
 	private PlayerController playerController;
 
+	// 状態制御系
 	private bool isDead = false;
 	private bool isAttack = false;
 
+	/*************************************************************
+	 * 初期処理
+	 *************************************************************/
 	public void Initialize () {
 		//agent = GetComponent<NavMeshAgent>();
 		controller = GetComponent<CharacterController>();
@@ -36,7 +44,9 @@ public class EnemyController : MonoBehaviour {
 		transform.SetParent(enemyRoot.transform);
 	}
 
-	// Update is called once per frame
+	/*************************************************************
+	 * 更新処理
+	 *************************************************************/
 	void Update () {
 		if (isDead) return;
 		
@@ -56,14 +66,9 @@ public class EnemyController : MonoBehaviour {
 		}
 	}
 
-	// 死んだ処理
-	IEnumerator Die() {
-		yield return new WaitForSeconds(3f);
-		// TODO:消滅エフェクトをいれる
-		this.gameObject.SetActive(false);
-	}
-
-	// 攻撃
+	/*************************************************************
+	 * 攻撃
+	 *************************************************************/
 	IEnumerator Attack() {
 		isAttack = true;
 		animator.SetBool("Run", false);
@@ -83,7 +88,9 @@ public class EnemyController : MonoBehaviour {
 		isAttack = false;
 	}
 
-	// 索敵用の衝突判定 (範囲内に入ったらプレイヤーを追跡対象とする)
+	/*************************************************************
+	 * 索敵用の衝突判定 (範囲内に入ったらプレイヤーを追跡対象とする)
+	 *************************************************************/
 	void OnTriggerEnter(Collider col) {
 		if (col.gameObject.tag == "PlayerTag") {
 			target = col.gameObject;
@@ -91,7 +98,9 @@ public class EnemyController : MonoBehaviour {
 		}
 	}
 
-	// ダメージ用の衝突判定
+	/*************************************************************
+	 * ダメージ用の衝突判定
+	 *************************************************************/
 	void OnCollisionEnter(Collision col) {
 		GameObject magic = col.gameObject;
 		if (isDead || magic.tag != "PlayerAttackTag") return;
@@ -114,6 +123,7 @@ public class EnemyController : MonoBehaviour {
 			enemyModel.hp = 0;
 			hpSlider.value = 0f;
 			isDead = true;
+
 			// 経験値を獲得
 			playerModel.AddExp(enemyModel.exp);
 			playerController.DisplayStatus();
@@ -125,9 +135,17 @@ public class EnemyController : MonoBehaviour {
 			animator.SetBool("Damage", true);
 			// TODO:被弾後、waitの時間を少し作りたい
 		}
-
 		magic.SetActive(false);
 
 		// TODO:違うタイプの攻撃はここに実装していく？
+	}
+
+	/*************************************************************
+	 * 死んだ処理
+	 *************************************************************/
+	IEnumerator Die() {
+		yield return new WaitForSeconds(3f);
+		// TODO:消滅エフェクトをいれる
+		this.gameObject.SetActive(false);
 	}
 }

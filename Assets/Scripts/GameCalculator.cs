@@ -3,6 +3,9 @@ using System.Collections;
 
 public class GameCalculator : MonoBehaviour {
 
+	/*************************************************************
+	 * 経験値を加算する
+	 *************************************************************/
 	public static int[] AddExp(int level, int currentExp, int getExp) {
 		// TODO:最大レベル時はそのままreturn;
 
@@ -17,6 +20,9 @@ public class GameCalculator : MonoBehaviour {
 		return newInfo;
 	}
 
+	/*************************************************************
+	 * 次のレベルアップに必要な経験値を取得する
+	 *************************************************************/
 	public static int getLevelUpExp(int currentlevel) {
 		// TODO:計算式記述　以下は一時処理
 		int exp = currentlevel * 30;

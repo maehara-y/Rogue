@@ -21,11 +21,17 @@ public class FloorModel {
 	[SerializeField] public float maxGimmickRate { get; set; }
 	[SerializeField] public string memo { get; set; }
 
+	/*************************************************************
+	 * 初期処理
+	 *************************************************************/
 	public void Initialize() {
 		// TODO:実際はcurrentFloorIdをキーにマスターから取得する
 		SetTestData();
 	}
 
+	/*************************************************************
+	 * デバッグ用のデータ設定
+	 *************************************************************/
 	void SetTestData() {
 	}
 }
