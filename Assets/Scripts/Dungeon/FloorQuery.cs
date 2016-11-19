@@ -17,8 +17,8 @@ public class FloorQuery : MonoBehaviour {
 		model.branchCount = 4;
 		model.branchLength = 2;
 		model.enemyGroupId = 1;
-		model.minEnemyRate = 0.5f;
-		model.maxEnemyRate = 0.8f;
+		model.minEnemyRate = 0.75f;
+		model.maxEnemyRate = 1.0f;
 		return model;
 	}
 }

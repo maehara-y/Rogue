@@ -55,7 +55,6 @@ public class EnemyController : MonoBehaviour {
 	 * プレイヤーを追跡する
 	 *************************************************************/
 	void Chase() {
-		// TODO: LookAtとdistanceの計算は数秒おきにやる？コルーチンで、isTargetingとかで
 		transform.LookAt(target.transform);
 		float distance = Vector3.Distance(transform.position, target.transform.position);
 		if (distance < enemyModel.chaseRange) {
@@ -63,8 +62,8 @@ public class EnemyController : MonoBehaviour {
 			if (!isAttack) StartCoroutine(Attack());
 		} else {
 			//agent.destination = target.transform.position;
-			controller.SimpleMove(transform.forward * this.speed);
 			animator.SetBool("Run", true);
+			controller.SimpleMove(transform.forward * this.speed);
 		}
 	}
 
@@ -87,6 +86,7 @@ public class EnemyController : MonoBehaviour {
 		attackParticle.transform.SetParent(battleObjectRoot.transform);
 
 		yield return new WaitForSeconds(1f);
+		animator.SetBool("Run", true);
 		isAttack = false;
 	}
 

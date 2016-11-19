@@ -6,13 +6,13 @@ public class MagicController : MonoBehaviour {
 	public GameObject shotParticle;
 	public GameObject impactParticle;
 	public MagicModel magicModel { get; set;}	// ヒット後のダメージ計算に利用？
-	public Rigidbody rigidbody;
+	public Rigidbody magicRigidbody;
 
 	/*************************************************************
 	 * 初期処理
 	 *************************************************************/
 	public void Initialize() {
-		rigidbody = gameObject.GetComponent<Rigidbody>();
+		magicRigidbody = gameObject.GetComponent<Rigidbody>();
 
 		shotParticle = Instantiate(shotParticle, transform.position, transform.rotation) as GameObject;
 		shotParticle.transform.SetParent(transform);
@@ -38,7 +38,7 @@ public class MagicController : MonoBehaviour {
 			if (childParticle) childParticle.Play();
 		}
 		// エフェクトを動かす
-		rigidbody.AddForce(transform.forward * magicModel.speed);
+		magicRigidbody.AddForce(transform.forward * magicModel.speed);
 	}
 	
 	void OnCollisionEnter(Collision hit) {

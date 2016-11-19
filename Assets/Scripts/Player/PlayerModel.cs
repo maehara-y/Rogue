@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class PlayerModel {
 
 	[SerializeField] public int id { get; set; }
-	[SerializeField] public int avatarColor { get; set; }
 	[SerializeField] public float moveSpeed { get; set; }
 	[SerializeField] public int growthType { get; set; }
 	[SerializeField] public int lv { get; set; }
@@ -65,14 +64,13 @@ public class PlayerModel {
 	 * デバッグ用のデータ設定
 	 *************************************************************/
 	void SetTestData() {
-		avatarColor = 1;	// TODO:未実装
 		moveSpeed = 3f;		// TODO:未実装
 		lv = 1;
 		exp = 0;
 		maxHp = 100;
 		hp = 100;
-		maxMp = 60;
-		mp = 60;
+		maxMp = 80;
+		mp = 80;
 		str = 30;
 		vit = 25;
 		dex = 20;

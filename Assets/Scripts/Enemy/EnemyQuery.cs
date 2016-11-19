@@ -33,12 +33,8 @@ public class EnemyQuery {
 	 * グループIDから1体のモンスターを抽出して取得する
 	 *************************************************************/
 	public static EnemyModel ChooseByGroupId(int enemyGroupId) {
-		// TODO:テスト用
-		// TODO:2の倍数、3の倍数、それ以外でモンスターの種類を分けてみる
+		// TODO:テスト用　ランダムに3種類ぐらい分けてみる
 		EnemyModel model = new EnemyModel();
-		model.enemyName = "スケルトン";
-		model.prefabName = "Enemy/Skeleton";
-		model.attackParticleName = "EnemyAttack/double-slash";
 		model.enemyType = 1;
 		model.attribute = 0;
 		model.hp = 200;
@@ -48,7 +44,25 @@ public class EnemyQuery {
 		model.baseDex = 15;
 		model.baseAgi = 10;
 		model.baseExp = 30;
-		model.chaseRange = 3f;
+		model.chaseRange = 5f;
+		int index = Random.Range(1,4);
+		switch(index) {
+		case 1 :
+			model.enemyName = "スケルトン";
+			model.prefabName = "Enemy/Demon";
+			model.attackParticleName = "EnemyAttack/double-slash";
+			break;
+		case 2:
+			model.enemyName = "アークデーモン";
+			model.prefabName = "Enemy/Demon";
+			model.attackParticleName = "EnemyAttack/double-slash";
+			break;
+		case 3 :
+			model.enemyName = "炎獣イフリート";
+			model.prefabName = "Enemy/Ifrit";
+			model.attackParticleName = "EnemyAttack/double-slash";
+			break;
+		}
 		return model;
 	}
 }

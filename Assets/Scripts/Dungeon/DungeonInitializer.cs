@@ -47,13 +47,16 @@ public class DungeonInitializer : MonoBehaviour {
 	 * モンスターを生成する
 	 *************************************************************/
 	void GenerateEnemies() {
-		// 出現数をランダム算出する (コクのあるランダムに)
-		// TODO:実際は部屋数とフロアマスターから割り出す
-		int enemyCount = (Random.Range(3,8) + Random.Range(3,8) + Random.Range(3,8)) / 3;
+		// モンスターの出現数をランダム算出する (コクのあるランダムに)
 		GameObject[] roomArr = GameObject.FindGameObjectsWithTag("RoomTag");
+		int minCount = (int)(roomArr.Length * floorModel.minEnemyRate);
+		int maxCount = (int)(roomArr.Length * floorModel.maxEnemyRate);
+		int enemyCount = (Random.Range(minCount, maxCount) + Random.Range(minCount, maxCount) + Random.Range(minCount, maxCount)) / 3;
 		//Debug.Log ("roomArr.Length:" + roomArr.Length);
+
+		// モンスター出現数分ループし、ランダムに部屋ごとにモンスターを割り当てる
 		List<GameObject> rooms = new List<GameObject>();
-		rooms.AddRange (roomArr);
+		rooms.AddRange(roomArr);
 		for (int i=0; i < enemyCount; i++) {
 			if (rooms.Count < i+1) break;
 			int randomIndex = Random.Range(0, rooms.Count);
