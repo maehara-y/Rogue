@@ -78,7 +78,7 @@ public class EnemyController : MonoBehaviour {
 		}
 
 		// 攻撃アクション中は何もしない
-		// TODO:敵が離れ過ぎたらキャンセルするとかをもしやるとしたらこの中に記述
+		// TODO:敵が離れ過ぎた時に予約行動をキャンセルするとしたらこの中に記述
 		if (isAttack) return;
 
 		// バトル行動チェーン中なら残りの行動を継続する
@@ -98,6 +98,7 @@ public class EnemyController : MonoBehaviour {
 			availableLongAttack = false;
 			StartCoroutine(ControlLongAttackCheck());
 			float randomVal = Random.value;
+			// TODO:一時処理
 			randomVal = 0.9f;
 			if (enemyModel.longAttackHitRate >= randomVal) {
 				Debug.Log ("<color=blue>ロングレンジ攻撃予約 randomVal:" + randomVal + "</color>");
@@ -110,6 +111,7 @@ public class EnemyController : MonoBehaviour {
 			}
 		}
 
+		// プレイヤーとの距離に応じて攻撃・追跡・追跡停止を選択する
 		if (distance < enemyModel.chaseRangeMin) {
 			// 一定距離に縮まったら攻撃
 			if (state != EnemyState.Battle) {
@@ -144,11 +146,10 @@ public class EnemyController : MonoBehaviour {
 	}
 
 	/*************************************************************
-	 * 行動が攻撃かステップか分岐する
+	 * アクションが攻撃かステップか、分岐して処理する
 	 *************************************************************/
 	private void DoAction(EnemyActionGroupModel.ActionKey actionKey) {
 		if (EnemyActionGroupModel.IsAttackActionKey(actionKey)) {
-			//Debug.Log ("アタック");
 			isAttack = true;
 			animator.SetBool("Idle", false);
 			animator.SetBool("Run", false);
@@ -156,7 +157,6 @@ public class EnemyController : MonoBehaviour {
 			StartCoroutine(DoAttack(actionKey));
 		}
 		if (EnemyActionGroupModel.IsStepActionKey(actionKey)) {
-			//Debug.Log ("ステップ");
 			if (!isStepping) DoStepBefore(actionKey);
 			StartCoroutine(DoStep(actionKey));
 		}
@@ -272,9 +272,6 @@ public class EnemyController : MonoBehaviour {
 		direction += Vector3.down * 9.81f * Time.deltaTime;
 		float distance = Vector3.Distance(transform.position, stepDestination);
 		if (distance > 1.0f) {
-			//Debug.Log ("distance:" + distance);
-			//Debug.Log ("stepDestination: x=" + stepDestination.x + ", z=" + stepDestination.z + ", y=" + stepDestination.y);
-			//Debug.Log ("transform: x=" + transform.position.x + ", z=" + transform.position.z + ", y=" + transform.position.y);
 			enemyController.Move(direction * Time.deltaTime);
 		}
 	}
