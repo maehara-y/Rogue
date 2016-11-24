@@ -9,7 +9,7 @@ public class EnemyController : MonoBehaviour {
 	// 物理制御系
 	public float runSpeed = 3.0f;
 	private float stepSpeed = 1.0f;
-	private float longRangeAttackSpeed = 30.0f;
+	private float longRangeAttackSpeed = 300.0f;
 	private GameObject target;	// プレイヤーのこと
 	private CharacterController enemyController;
 	private Animator animator;
@@ -83,6 +83,7 @@ public class EnemyController : MonoBehaviour {
 
 		// バトル行動チェーン中なら残りの行動を継続する
 		if (state == EnemyState.Battle && reservedActions.Count >= 1) {
+			Debug.Log ("<color=yellow>バトル行動継続 残り:" + reservedActions.Count + "回, アクション:" + reservedActions[0].ToString() + "</color>");
 			DoAction(reservedActions[0]);
 			return;
 		}
@@ -96,10 +97,16 @@ public class EnemyController : MonoBehaviour {
 			&& availableLongAttack && state != EnemyState.Battle) {
 			availableLongAttack = false;
 			StartCoroutine(ControlLongAttackCheck());
-			if (enemyModel.longAttackHitRate <= Random.value) {
+			float randomVal = Random.value;
+			randomVal = 0.9f;
+			if (enemyModel.longAttackHitRate >= randomVal) {
+				Debug.Log ("<color=blue>ロングレンジ攻撃予約 randomVal:" + randomVal + "</color>");
 				state = EnemyState.Battle;
-				reservedActions = EnemyActionGroupQuery.ChooseActionPatternByGroupId(enemyModel.longRangeActionGroupId);
-				DoAction(reservedActions[0]);
+				reservedActions = EnemyActionGroupQuery.ChooseActionPatternByGroupId (enemyModel.longRangeActionGroupId);
+				DoAction (reservedActions [0]);
+				return;
+			} else {
+				Debug.Log ("<color=blue>ロングレンジ攻撃なし randomVal:" + randomVal + "</color>");
 			}
 		}
 
@@ -109,14 +116,18 @@ public class EnemyController : MonoBehaviour {
 				state = EnemyState.Battle;
 				reservedActions = EnemyActionGroupQuery.ChooseActionPatternByGroupId(enemyModel.shortRangeActionGroupId);
 				DoAction(reservedActions[0]);
+				Debug.Log ("<color=red>ショートレンジ攻撃予約 アクション:" + reservedActions[0].ToString() + "</color>");
 			}
 
 		} else if (distance > enemyModel.chaseRangeMax) {
 			// 一定距離離れすぎたら追跡をやめる
+			Debug.Log ("<color=white>追跡エンド</color>");
 			state = EnemyState.Wait;
 			animator.SetBool("Run", false);
+			animator.SetBool("Idle", true);
 		} else {
 			// 追跡範囲内なら追跡
+			Debug.Log ("<color=green>追跡スタート</color>");
 			state = EnemyState.Chase;
 			animator.SetBool("Idle", false);
 			animator.SetBool("Run", true);
@@ -137,9 +148,16 @@ public class EnemyController : MonoBehaviour {
 	 *************************************************************/
 	private void DoAction(EnemyActionGroupModel.ActionKey actionKey) {
 		if (EnemyActionGroupModel.IsAttackActionKey(actionKey)) {
+			//Debug.Log ("アタック");
+			isAttack = true;
+			animator.SetBool("Idle", false);
+			animator.SetBool("Run", false);
+			animator.SetTrigger(actionKey.ToString());
 			StartCoroutine(DoAttack(actionKey));
 		}
 		if (EnemyActionGroupModel.IsStepActionKey(actionKey)) {
+			//Debug.Log ("ステップ");
+			if (!isStepping) DoStepBefore(actionKey);
 			StartCoroutine(DoStep(actionKey));
 		}
 	}
@@ -148,11 +166,6 @@ public class EnemyController : MonoBehaviour {
 	 * 攻撃アクションの実行
 	 *************************************************************/
 	IEnumerator DoAttack(EnemyActionGroupModel.ActionKey actionKey) {
-		isAttack = true;
-		animator.SetBool("Idle", false);
-		animator.SetBool("Run", false);
-		animator.SetTrigger(actionKey.ToString());
-
 		yield return new WaitForSeconds(EnemyActionGroupModel.AttackWaitTimeActionKey(actionKey));
 		// 各攻撃に応じたエフェクトの生成
 		if (EnemyActionGroupModel.IsShortRangeAttackActionKey(actionKey)) CreateShortRangeAttackEffect((int)actionKey);
@@ -188,10 +201,10 @@ public class EnemyController : MonoBehaviour {
 	 *************************************************************/
 	private void CreateLongRangeAttackEffect(int actionKeyIndex) {
 		Vector3 hitEffectPosition = transform.position + transform.forward * 2;
-		hitEffectPosition.y += 1;
+		hitEffectPosition.y += 1.5f;
 		GameObject attackPrefab = (GameObject)Resources.Load(enemyModel.attackParticleNames.Split(',')[actionKeyIndex]);
 		// TODO:InstantiateはここではなくInitialize時に行ってプールしておく
-		GameObject attackParticle = Instantiate(attackPrefab, hitEffectPosition, Quaternion.identity) as GameObject;
+		GameObject attackParticle = Instantiate(attackPrefab, hitEffectPosition, transform.rotation) as GameObject;
 		attackParticle.transform.SetParent(battleObjectRoot.transform);
 
 		EnemyAttack enemyAttack = attackParticle.GetComponent<EnemyAttack>();
@@ -211,20 +224,6 @@ public class EnemyController : MonoBehaviour {
 	}
 
 	/*************************************************************
-	 * サイドステップ処理
-	 *************************************************************/
-	IEnumerator DoStep(EnemyActionGroupModel.ActionKey actionKey) {
-		if (!isStepping) DoStepBefore(actionKey);
-		MoveByStep();
-		yield return new WaitForSeconds(0.5f);
-		reservedActions.RemoveAt(0);
-		if (reservedActions.Count < 1) {
-			state = EnemyState.Wait;
-		}
-		isStepping = false;
-	}
-
-	/*************************************************************
 	 * ステップの共通事前処理
 	 *************************************************************/
 	private void DoStepBefore(EnemyActionGroupModel.ActionKey actionKey) {
@@ -238,6 +237,7 @@ public class EnemyController : MonoBehaviour {
 		float forwardDistance = (Random.Range(positions[0], positions[1]) + Random.Range(positions[0], positions[1])) / 2f;
 		float rightDistance = (Random.Range(positions[2], positions[3]) + Random.Range(positions[2], positions[3])) / 2f;
 		//sideStepDistance = sideStepDistance - (sideStepDistance/2);
+		Debug.Log ("ステップ座標　forwardDistance : " + forwardDistance + ", rightDistance : " + rightDistance);
 		Vector3 destinationTransform = transform.position;
 		destinationTransform += transform.forward * forwardDistance;
 		destinationTransform += transform.right * rightDistance;
@@ -250,6 +250,19 @@ public class EnemyController : MonoBehaviour {
 	}
 
 	/*************************************************************
+	 * ステップ処理
+	 *************************************************************/
+	IEnumerator DoStep(EnemyActionGroupModel.ActionKey actionKey) {
+		MoveByStep();
+		yield return new WaitForSeconds(0.5f);
+		reservedActions.RemoveAt(0);
+		if (reservedActions.Count < 1) {
+			state = EnemyState.Wait;
+		}
+		isStepping = false;
+	}
+
+	/*************************************************************
 	 * ステップによる移動
 	 *************************************************************/
 	private void MoveByStep() {
@@ -259,7 +272,7 @@ public class EnemyController : MonoBehaviour {
 		direction += Vector3.down * 9.81f * Time.deltaTime;
 		float distance = Vector3.Distance(transform.position, stepDestination);
 		if (distance > 1.0f) {
-			Debug.Log ("distance:" + distance);
+			//Debug.Log ("distance:" + distance);
 			//Debug.Log ("stepDestination: x=" + stepDestination.x + ", z=" + stepDestination.z + ", y=" + stepDestination.y);
 			//Debug.Log ("transform: x=" + transform.position.x + ", z=" + transform.position.z + ", y=" + transform.position.y);
 			enemyController.Move(direction * Time.deltaTime);
@@ -280,6 +293,7 @@ public class EnemyController : MonoBehaviour {
 	 * ダメージ用の衝突判定
 	 *************************************************************/
 	void OnCollisionEnter(Collision col) {
+		Debug.Log ("OnCollisionEnter スタート");
 		GameObject magic = col.gameObject;
 		if (state == EnemyState.Die || magic.tag != "PlayerAttackTag") return;
 		MagicController magicController = magic.GetComponent<MagicController>();
@@ -295,9 +309,11 @@ public class EnemyController : MonoBehaviour {
 		float distance = Vector3.Distance(transform.position, magicController.startPosition);
 		bool isHit = BattleCalculator.IsHitEnemy(playerModel, magicController.magicModel, enemyModel, distance);
 		if (!isHit) return;
+		Debug.Log ("isHit!!!!!");
 
 		// 衝突エフェクトを表示する
 		magicController.CallImpact();
+		Debug.Log ("衝突パーティクル表示");
 
 		// ダメージ計算をする
 		int damage = 0;

@@ -5,7 +5,7 @@ public class MagicController : MonoBehaviour {
 
 	public GameObject shotParticle;
 	public GameObject impactParticle;
-	public MagicModel magicModel { get; set;}	// ヒット後のダメージ計算に利用？
+	public MagicModel magicModel;	// ヒット後のダメージ計算に利用？
 	public Rigidbody magicRigidbody;
 	public Vector3 startPosition;
 

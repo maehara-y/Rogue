@@ -46,12 +46,24 @@ public class EnemyActionGroupQuery {
 			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeQuickAttack);
 			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeQuickAttack);
 			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeChargeAttack);
-			result.Add(EnemyActionGroupModel.ActionKey.BackStep);
-			result.Add(EnemyActionGroupModel.ActionKey.BackStep);
+			result.Add(EnemyActionGroupModel.ActionKey.BackCenterStep);
+			result.Add(EnemyActionGroupModel.ActionKey.FrontCenterStep);
+			result.Add(EnemyActionGroupModel.ActionKey.BackCenterStep);
 			result.Add(EnemyActionGroupModel.ActionKey.LongRangeNormalAttack);
+
+			/*ステップテスト
+			result.Add(EnemyActionGroupModel.ActionKey.LeftStep);
+			result.Add(EnemyActionGroupModel.ActionKey.BackLeftStep);
+			result.Add(EnemyActionGroupModel.ActionKey.BackRightStep);
+			result.Add(EnemyActionGroupModel.ActionKey.RightStep);
+			result.Add(EnemyActionGroupModel.ActionKey.RightStep);
+			result.Add(EnemyActionGroupModel.ActionKey.FrontRightStep);
+			result.Add(EnemyActionGroupModel.ActionKey.FrontLeftStep);
+			result.Add(EnemyActionGroupModel.ActionKey.LeftStep);*/
 		} else if (groupId == 2) {
 			result.Add(EnemyActionGroupModel.ActionKey.LongRangeQuickAttack);
 			result.Add(EnemyActionGroupModel.ActionKey.LongRangeQuickAttack);
+			result.Add(EnemyActionGroupModel.ActionKey.BackCenterStep);
 			result.Add(EnemyActionGroupModel.ActionKey.LongRangeChargeAttack);
 		}
 		return result;

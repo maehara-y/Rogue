@@ -196,10 +196,11 @@ public class PlayerController : MonoBehaviour {
 		// ダメージ計算
 		EnemyAttack enemyAttack = col.gameObject.GetComponent<EnemyAttack>();
 		int damage = 0;
-		MagicModel usableMagic = playerModel.GetUsableMagic();
-		if (BattleCalculator.IsHitPlayer(playerModel, usableMagic, enemyAttack.enemyModel)) {
-			damage = BattleCalculator.GetPlayerDamage(playerModel, usableMagic, enemyAttack.enemyModel, enemyAttack.actionKey);
+		if (BattleCalculator.IsHitPlayer(playerModel, enemyAttack.enemyModel)) {
+			damage = BattleCalculator.GetPlayerDamage(playerModel, enemyAttack.enemyModel, enemyAttack.actionKey);
 		}
+		// TODO:一時処理
+		Destroy(col.gameObject);
 
 		// HPが0以下になったら死ぬ
 		if (playerModel.hp <= damage) {
