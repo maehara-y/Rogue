@@ -190,6 +190,7 @@ public class PlayerController : MonoBehaviour {
 	 * 被ダメージ用の衝突判定
 	 *************************************************************/
 	void OnTriggerEnter(Collider col) {
+		// TODO:モンスターが死んでから発せられた攻撃は無効にする
 		if (col.gameObject.tag != "EnemyAttackTag") return;
 
 		// ダメージ計算
@@ -197,7 +198,7 @@ public class PlayerController : MonoBehaviour {
 		int damage = 0;
 		MagicModel usableMagic = playerModel.GetUsableMagic();
 		if (BattleCalculator.IsHitPlayer(playerModel, usableMagic, enemyAttack.enemyModel)) {
-			damage = BattleCalculator.GetPlayerDamage(playerModel, usableMagic, enemyAttack.enemyModel);
+			damage = BattleCalculator.GetPlayerDamage(playerModel, usableMagic, enemyAttack.enemyModel, enemyAttack.actionKey);
 		}
 
 		// HPが0以下になったら死ぬ

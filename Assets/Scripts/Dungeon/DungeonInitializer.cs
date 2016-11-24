@@ -17,8 +17,8 @@ public class DungeonInitializer : MonoBehaviour {
 	}*/
 
 	/*************************************************************
-	* シーン読込時の初期処理 (DunGenのRuntimeDungeonスクリプトの処理終了時に呼ばれる)
-	*************************************************************/
+	 * シーン読込時の初期処理 (DunGenのRuntimeDungeonスクリプトの処理終了時に呼ばれる)
+	 *************************************************************/
 	public void Initialize () {
 		SettingFloor();
 		GeneratePlayer();
@@ -47,7 +47,7 @@ public class DungeonInitializer : MonoBehaviour {
 	 * モンスターを生成する
 	 *************************************************************/
 	void GenerateEnemies() {
-		// モンスターの出現数をランダム算出する (コクのあるランダムに)
+		// モンスターの出現数をランダム算出する (正規分布に近いランダムさで)
 		GameObject[] roomArr = GameObject.FindGameObjectsWithTag("RoomTag");
 		int minCount = (int)(roomArr.Length * floorModel.minEnemyRate);
 		int maxCount = (int)(roomArr.Length * floorModel.maxEnemyRate);
@@ -64,12 +64,12 @@ public class DungeonInitializer : MonoBehaviour {
 			rooms.RemoveAt(randomIndex);
 			//Debug.Log ("room ramdomindex:" + randomIndex + ", x:" + room.transform.position.x + ", y:" + room.transform.position.y + ", z:" + room.transform.position.z);
 
-			// TODO:Resourcesは重いので、全モンスタープレハブのリストをpublic変数にinspector上でセットしておく？
 			// フロア情報から出現モンスターの種類を特定し、フロア階層にあったLevelとステータスを設定する
 			EnemyModel enemyModel = EnemyQuery.ChooseByGroupId(floorModel.enemyGroupId);
 			int enemyLevel = GameCalculator.GetEnemyLevel(floorModel.floorNumber);
 			enemyModel.level = enemyLevel;
 			enemyModel = GameCalculator.GetEnemyStatusByLevel(enemyLevel, enemyModel);
+			// TODO:Resourcesは重いので、全モンスタープレハブのリストをpublic変数にinspector上でセットしておく？
 			GameObject enemyPrefab = (GameObject)Resources.Load(enemyModel.prefabName);
 			GameObject enemyObj = Instantiate(enemyPrefab, room.transform.position, room.transform.rotation) as GameObject;
 			enemyObj.transform.SetParent(enemyRoot.transform);

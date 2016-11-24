@@ -7,6 +7,7 @@ public class MagicController : MonoBehaviour {
 	public GameObject impactParticle;
 	public MagicModel magicModel { get; set;}	// ヒット後のダメージ計算に利用？
 	public Rigidbody magicRigidbody;
+	public Vector3 startPosition;
 
 	/*************************************************************
 	 * 初期処理
@@ -37,11 +38,27 @@ public class MagicController : MonoBehaviour {
 			ParticleSystem childParticle = shotChild.gameObject.GetComponent<ParticleSystem>();
 			if (childParticle) childParticle.Play();
 		}
+		startPosition = transform.position;
 		// エフェクトを動かす
 		magicRigidbody.AddForce(transform.forward * magicModel.speed);
 	}
 	
-	void OnCollisionEnter(Collision hit) {
+	/*************************************************************
+	 * 衝突処理
+	 *************************************************************/
+		void OnCollisionEnter(Collision hit) {
+		// 敵へのヒットはCallImpactメソッドから呼び出す
+		EnemyController enemyController = hit.gameObject.GetComponent<EnemyController>();
+		if (enemyController != null) return;
+
+		gameObject.SetActive(true);
+		StartCoroutine(Impact());
+	}
+
+	/*************************************************************
+	 * 衝突時エフェクト表示処理を呼び出す
+	 *************************************************************/
+	public void CallImpact() {
 		gameObject.SetActive(true);
 		StartCoroutine(Impact());
 	}

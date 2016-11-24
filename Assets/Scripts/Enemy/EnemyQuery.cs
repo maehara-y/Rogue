@@ -44,23 +44,32 @@ public class EnemyQuery {
 		model.baseDex = 15;
 		model.baseAgi = 10;
 		model.baseExp = 30;
-		model.chaseRange = 5f;
+		model.chaseRangeMin = 5f;
+		model.chaseRangeMax = 20f;
+		model.shortRangeActionGroupId = 1;
+		model.longRangeActionGroupId = 2;
+		model.longAttackHitRate = 0.2f;
+		model.longAttackRangeMin = 6.0f;
+		model.longAttackRangeMax = 18.0f;
+		model.attackDamageRates = "1,0.5,2,1.6,0.8,3.2,5";
 		int index = Random.Range(1,4);
 		switch(index) {
 		case 1 :
 			model.enemyName = "スケルトン";
+			model.prefabName = "Enemy/Skeleton";
 			model.prefabName = "Enemy/Demon";
-			model.attackParticleName = "EnemyAttack/double-slash";
+			model.attackParticleNames = "EnemyAttack/double-slash,EnemyAttack/double-slash,EnemyAttack/double-slash,EnemyAttack/DeathMissile,EnemyAttack/SlimeMissile,EnemyAttack/BloodMissile";
 			break;
 		case 2:
 			model.enemyName = "アークデーモン";
 			model.prefabName = "Enemy/Demon";
-			model.attackParticleName = "EnemyAttack/double-slash";
+			model.attackParticleNames = "EnemyAttack/double-slash,EnemyAttack/double-slash,EnemyAttack/double-slash,EnemyAttack/DeathMissile,EnemyAttack/SlimeMissile,EnemyAttack/BloodMissile";
 			break;
 		case 3 :
 			model.enemyName = "炎獣イフリート";
 			model.prefabName = "Enemy/Ifrit";
-			model.attackParticleName = "EnemyAttack/double-slash";
+			model.prefabName = "Enemy/Demon";
+			model.attackParticleNames = "EnemyAttack/double-slash,EnemyAttack/double-slash,EnemyAttack/double-slash,EnemyAttack/DeathMissile,EnemyAttack/SlimeMissile,EnemyAttack/BloodMissile";
 			break;
 		}
 		return model;

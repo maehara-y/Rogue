@@ -6,7 +6,7 @@ public class BattleCalculator : MonoBehaviour {
 	/*************************************************************
 	 * 敵攻撃時のプレイヤー側ダメージ計算を行う
 	 *************************************************************/
-	public static int GetPlayerDamage(PlayerModel player, MagicModel magic, EnemyModel enemy) {
+	public static int GetPlayerDamage(PlayerModel player, MagicModel magic, EnemyModel enemy, EnemyActionGroupModel.ActionKey actionKey) {
 		// TODO:計算式記述
 		return 15;
 	}
@@ -22,8 +22,9 @@ public class BattleCalculator : MonoBehaviour {
 	/*************************************************************
 	 * プレイヤー攻撃時の命中判定を行う
 	 *************************************************************/
-	public static bool IsHitEnemy(PlayerModel player, MagicModel magic, EnemyModel enemy) {
-		// TODO:計算式記述
+	public static bool IsHitEnemy(PlayerModel player, MagicModel magic, EnemyModel enemy, float distance) {
+		// TODO:計算式記述 とりあえず半々の確率で命中
+		if (Random.value > 0.5f) return false; 
 		return true;
 	}
 
