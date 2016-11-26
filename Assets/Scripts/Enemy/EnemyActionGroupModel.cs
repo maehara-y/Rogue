@@ -72,6 +72,17 @@ public class EnemyActionGroupModel {
 	}
 
 	/*************************************************************
+	 * アクションキーが遠距離攻撃かどうか
+	 *************************************************************/
+	public static bool IsChargeAttackActionKey(ActionKey actionKey) {
+		if (ActionKey.ShortRangeChargeAttack.Equals(actionKey)
+			|| ActionKey.LongRangeChargeAttack.Equals(actionKey)) {
+			return true;
+		}
+		return false;
+	}
+
+	/*************************************************************
 	 * actionKeyからステップの移動範囲の各座標配列を取得する
 	 * 0:forwardの最小値、1:forwardの最大値、2:rightの最小値、3:rightの最大値
 	 *************************************************************/
@@ -111,9 +122,9 @@ public class EnemyActionGroupModel {
 		if (ActionKey.ShortRangeNormalAttack.Equals(actionKey)) {
 			attackWaitTime = 1.5f;
 		} else if(ActionKey.ShortRangeQuickAttack.Equals(actionKey)) {
-			attackWaitTime = 0.75f;
+			attackWaitTime = 1.0f;
 		} else if(ActionKey.ShortRangeChargeAttack.Equals(actionKey)) {
-			attackWaitTime = 3.0f;
+			attackWaitTime = 2.0f;
 		} else if(ActionKey.LongRangeNormalAttack.Equals(actionKey)) {
 			attackWaitTime = 2.0f;
 		} else if(ActionKey.LongRangeQuickAttack.Equals(actionKey)) {

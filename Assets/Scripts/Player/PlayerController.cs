@@ -27,13 +27,14 @@ public class PlayerController : MonoBehaviour {
 	public GameObject battleObjectRoot;
 
 	// 状態制御系
+	public bool isAttack = false;
 	public bool isDead = false;
 	public bool isDamage = false;
 
 	// パラメータ系
 	public PlayerModel playerModel;
 	private List<List<GameObject>> magicInstances;
-	private int maxMagicInstanceIndex = 3;
+	private int maxMagicInstanceIndex = 2;
 	private int magicInstanceIndex = 0;
 
 	// TODO:Input一時処理
@@ -92,7 +93,8 @@ public class PlayerController : MonoBehaviour {
 	 * 更新処理
 	 *************************************************************/
 	void Update () {
-		if (isDead || isDamage) return;
+		// 死亡時・被ダメ中・攻撃中は操作不可
+		if (isDead || isDamage || isAttack) return;
 
 		// 移動
 		if (controller.isGrounded) {
@@ -162,9 +164,11 @@ public class PlayerController : MonoBehaviour {
 	 * 攻撃 (魔法の使用)
 	 *************************************************************/
 	IEnumerator Attack() {
-		// MPが足りなければ使えない
+		// 攻撃中やMP不足時は使えない
 		MagicModel usableMagic = playerModel.GetUsableMagic();
-		if (playerModel.mp < usableMagic.useMp) yield break;
+		if (isAttack || playerModel.mp < usableMagic.useMp) yield break;
+
+		isAttack = true;
 		playerModel.mp -= usableMagic.useMp;
 		// 画面表示更新
 		DisplayStatus();
@@ -183,6 +187,7 @@ public class PlayerController : MonoBehaviour {
 			magicObj.transform.position = pos;
 			magicObj.transform.rotation = transform.rotation;
 			magicObj.GetComponent<MagicController>().Shot();
+			isAttack = false;
 		}
 	}
 
@@ -200,7 +205,7 @@ public class PlayerController : MonoBehaviour {
 			damage = BattleCalculator.GetPlayerDamage(playerModel, enemyAttack.enemyModel, enemyAttack.actionKey);
 		}
 		// TODO:一時処理
-		Destroy(col.gameObject);
+		//Destroy(col.gameObject);
 
 		// HPが0以下になったら死ぬ
 		if (playerModel.hp <= damage) {
@@ -219,7 +224,8 @@ public class PlayerController : MonoBehaviour {
 		isDamage = true;
 		playerModel.hp -= damage;
 		animator.SetTrigger("TakeDamage");
-		yield return new WaitForSeconds(1f);
+		// TODO:一時処理 実際は0.5秒くらい？
+		yield return new WaitForSeconds(0.01f);
 		isDamage = false;
 	}
 

@@ -24,7 +24,7 @@ public class BattleCalculator : MonoBehaviour {
 	 *************************************************************/
 	public static bool IsHitEnemy(PlayerModel player, MagicModel magic, EnemyModel enemy, float distance) {
 		// TODO:計算式記述 とりあえず半々の確率で命中
-		if (Random.value > 0.5f) return false; 
+		//if (Random.value > 0.5f) return false; 
 		return true;
 	}
 
