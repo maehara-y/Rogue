@@ -8,7 +8,7 @@ public class BattleCalculator : MonoBehaviour {
 	 *************************************************************/
 	public static int GetPlayerDamage(PlayerModel player, EnemyModel enemy, EnemyActionGroupModel.ActionKey actionKey) {
 		// TODO:計算式記述
-		return 15;
+		return 5;
 	}
 
 	/*************************************************************

@@ -36,6 +36,8 @@ public class EnemyController : MonoBehaviour {
 	private List<EnemyActionGroupModel.ActionKey> reservedActions = new List<EnemyActionGroupModel.ActionKey>();
 	private string currentActionKey;
 
+	private float debugTime = 0;
+
 	/*************************************************************
 	 * 初期処理
 	 *************************************************************/
@@ -57,6 +59,7 @@ public class EnemyController : MonoBehaviour {
 	 * 更新処理
 	 *************************************************************/
 	void Update () {
+		debugTime += Time.deltaTime;
 		if (!target || state == EnemyState.Die) return;
 
 		// 状態遷移を行う
@@ -80,7 +83,7 @@ public class EnemyController : MonoBehaviour {
 
 		// ステップ中は移動処理
 		if (isStepping) {
-			Debug.Log ("<color=yellow>ステップ中</color>");
+			//Debug.Log ("<color=yellow>ステップ中</color>");
 			MoveByStep ();
 			return;
 		}
@@ -91,7 +94,7 @@ public class EnemyController : MonoBehaviour {
 
 		// バトル行動チェーン中なら残りの行動を継続する
 		if (state == EnemyState.Battle && reservedActions.Count >= 1) {
-			Debug.Log ("<color=yellow>バトル行動継続 残り:" + reservedActions.Count + "回, アクション:" + reservedActions[0].ToString() + "</color>");
+			Debug.Log (debugTime + " <color=yellow>バトル行動継続 残り:" + reservedActions.Count + "回, アクション:" + reservedActions[0].ToString() + "</color>");
 			DoAction(reservedActions[0]);
 			return;
 		}
@@ -114,8 +117,6 @@ public class EnemyController : MonoBehaviour {
 				reservedActions = EnemyActionGroupQuery.ChooseActionPatternByGroupId (enemyModel.longRangeActionGroupId);
 				DoAction(reservedActions[0]);
 				return;
-			} else {
-				//Debug.Log ("<color=blue>ロングレンジ攻撃なし randomVal:" + randomVal + "</color>");
 			}
 		}
 
@@ -125,8 +126,8 @@ public class EnemyController : MonoBehaviour {
 			if (state != EnemyState.Battle) {
 				state = EnemyState.Battle;
 				reservedActions = EnemyActionGroupQuery.ChooseActionPatternByGroupId(enemyModel.shortRangeActionGroupId);
+				Debug.Log (debugTime + " <color=red>ショートレンジ攻撃予約 アクション:" + reservedActions[0].ToString() + "</color>");
 				DoAction(reservedActions[0]);
-				Debug.Log ("<color=red>ショートレンジ攻撃予約 アクション:" + reservedActions[0].ToString() + "</color>");
 			}
 
 		} else if (distance > enemyModel.chaseRangeMax) {
@@ -166,11 +167,13 @@ public class EnemyController : MonoBehaviour {
 			animator.SetBool("Idle", false);
 			animator.SetBool("Run", false);
 			animator.SetTrigger(actionKey.ToString());
-			StartCoroutine(DoAttack(actionKey));
+			Debug.Log (debugTime + " <color=red>DoAction 攻撃:" + actionKey.ToString() + "</color>");
+			StartCoroutine("DoAttack", actionKey);
 		}
 		if (EnemyActionGroupModel.IsStepActionKey(actionKey)) {
-			if (!isStepping) DoStepBefore(actionKey);
-			StartCoroutine(DoStep(actionKey));
+			if (isStepping) return;
+			DoStepBefore(actionKey);
+			StartCoroutine("DoStep", actionKey);
 		}
 	}
 
@@ -179,13 +182,14 @@ public class EnemyController : MonoBehaviour {
 	 *************************************************************/
 	IEnumerator DoAttack(EnemyActionGroupModel.ActionKey actionKey) {
 		yield return new WaitForSeconds(EnemyActionGroupModel.AttackWaitTimeActionKey(actionKey));
-		if (reservedActions.Count < 1) yield return null;	// 行動キャンセル時は終了
+		if (reservedActions.Count < 1) yield break;	// 行動キャンセル時は終了
 
 		// 各攻撃に応じたエフェクトの生成
 		if (EnemyActionGroupModel.IsShortRangeAttackActionKey(actionKey)) CreateShortRangeAttackEffect((int)actionKey);
 		if (EnemyActionGroupModel.IsLongRangeAttackActionKey(actionKey)) CreateLongRangeAttackEffect((int)actionKey);
 		if (EnemyActionGroupModel.ActionKey.SkillAttack.Equals(actionKey)) SkillAttackEffect((int)actionKey);
 
+		if (reservedActions.Count < 1) yield break;	// 行動キャンセル時は終了
 		reservedActions.RemoveAt(0);
 		if (reservedActions.Count < 1) {
 			yield return new WaitForSeconds(2f);
@@ -267,7 +271,7 @@ public class EnemyController : MonoBehaviour {
 	 * ステップ処理
 	 *************************************************************/
 	IEnumerator DoStep(EnemyActionGroupModel.ActionKey actionKey) {
-		if (reservedActions.Count < 1) yield return null;	// 行動キャンセル時は終了
+		if (reservedActions.Count < 1) yield break;	// 行動キャンセル時は終了
 		MoveByStep();
 		yield return new WaitForSeconds(0.5f);
 		if (reservedActions.Count > 0) {
@@ -307,7 +311,7 @@ public class EnemyController : MonoBehaviour {
 	 * ダメージ用の衝突判定
 	 *************************************************************/
 	void OnCollisionEnter(Collision col) {
-		Debug.Log ("<color=blue>OnCollisionEnter スタート</color>");
+		//Debug.Log (debugTime + " <color=blue>OnCollisionEnter スタート</color>");
 		GameObject magic = col.gameObject;
 		MagicController magicController = magic.GetComponent<MagicController>();
 		// ステップ中は無敵、ダメージ中は重ねてダメージを受けない
@@ -326,7 +330,6 @@ public class EnemyController : MonoBehaviour {
 			return;
 		}
 
-		Debug.Log ("<color=blue>OnCollisionEnter ヒット前</color>");
 		// 発射位置との距離によって命中率が変動し、それを元に命中判定を行い、ヒットしてなければ処理終了
 		float distance = Vector3.Distance(transform.position, magicController.startPosition);
 		bool isHit = BattleCalculator.IsHitEnemy(playerModel, magicController.magicModel, enemyModel, distance);
@@ -335,11 +338,9 @@ public class EnemyController : MonoBehaviour {
 			magic.SetActive(false);
 			return;
 		}
-		Debug.Log ("<color=yellow>OnCollisionEnter ヒットした！！！</color>");
 
 		// 衝突エフェクトを表示する
 		magicController.CallImpact();
-		Debug.Log ("<color=red>衝突パーティクル表示</color>");
 
 		// ダメージ計算をする
 		int damage = 0;
@@ -362,10 +363,8 @@ public class EnemyController : MonoBehaviour {
 				isChargeAttack = EnemyActionGroupModel.IsChargeAttackActionKey(currentKey);
 			}
 			if (state == EnemyState.Wait || state == EnemyState.Chase || (isAttack && isChargeAttack)) {
-				Debug.Log ("<color=green>被ダメモーションあり</color>");
+				Debug.Log (debugTime + " <color=green>被ダメモーション開始</color>");
 				StartCoroutine(Damaging());
-			} else {
-				Debug.Log ("<color=green>被ダメモーションなし</color>");
 			}
 		}
 		magic.SetActive(false);
@@ -379,11 +378,14 @@ public class EnemyController : MonoBehaviour {
 		isDamage = true;
 		isAttack = false;
 		isStepping = false;
+		StopCoroutine("DoAttack");
+		StopCoroutine("DoStep");
 		reservedActions = new List<EnemyActionGroupModel.ActionKey>();
 		state = EnemyState.Wait;
 
 		yield return new WaitForSeconds(0.5f);
 		isDamage = false;
+		Debug.Log (debugTime + " <color=green>被ダメモーション終了</color>");
 	}
 
 	/*************************************************************

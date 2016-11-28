@@ -89,27 +89,27 @@ public class EnemyActionGroupModel {
 	public static float[] StepRangeByActionKey(ActionKey actionKey) {
 		float[] positions = null;
 		if (ActionKey.BackStep.Equals(actionKey)) {
-			positions = new float[] {-6f, 0f, -6f, 6f};
+			positions = new float[] { -6f, -2f, -6f,  6f };
 		} else if (ActionKey.BackLeftStep.Equals(actionKey)) {
-			positions = new float[] {-6f, 0f, -6f, 0f};
+			positions = new float[] { -6f, -2f, -6f, -2f };
 		} else if (ActionKey.BackCenterStep.Equals(actionKey)) {
-			positions = new float[] {-6f, 0f, -2f, 2f};
+			positions = new float[] { -6f, -2f, -2f,  2f };
 		} else if (ActionKey.BackRightStep.Equals(actionKey)) {
-			positions = new float[] {-6f, 0f,  0f, 6f};
+			positions = new float[] { -6f, -2f,  2f,  6f };
 		} else if (ActionKey.FrontStep.Equals(actionKey)) {
-			positions = new float[] { 0f, 6f, -6f, 6f};
+			positions = new float[] {  2f,  6f, -6f,  6f };
 		} else if (ActionKey.FrontLeftStep.Equals(actionKey)) {
-			positions = new float[] { 0f, 6f, -6f, 0f};
+			positions = new float[] {  2f,  6f, -6f, -2f };
 		} else if (ActionKey.FrontCenterStep.Equals(actionKey)) {
-			positions = new float[] { 0f, 6f, -2f, 2f};
+			positions = new float[] {  2f,  6f, -2f,  2f };
 		} else if (ActionKey.FrontRightStep.Equals(actionKey)) {
-			positions = new float[] { 0f, 6f,  0f, 6f};
+			positions = new float[] {  2f,  6f,  2f,  6f };
 		} else if (ActionKey.SideStep.Equals(actionKey)) {
-			positions = new float[] {-2f, 2f, -6f, 6f};
+			positions = new float[] { -2f,  2f, -6f,  6f };
 		} else if (ActionKey.LeftStep.Equals(actionKey)) {
-			positions = new float[] {-2f, 2f, -6f, 0f};
+			positions = new float[] { -2f,  2f, -6f, -2f };
 		} else if (ActionKey.RightStep.Equals(actionKey)) {
-			positions = new float[] {-2f, 2f,  0f, 6f};
+			positions = new float[] { -2f,  2f,  2f,  6f };
 		}
 		return positions;
 	}
