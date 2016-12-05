@@ -51,7 +51,6 @@ public class MagicController : MonoBehaviour {
 		EnemyController enemyController = hit.gameObject.GetComponent<EnemyController>();
 		if (enemyController != null) return;
 
-		gameObject.SetActive(true);
 		StartCoroutine(Impact());
 	}
 
@@ -59,7 +58,6 @@ public class MagicController : MonoBehaviour {
 	 * 衝突時エフェクト表示処理を呼び出す
 	 *************************************************************/
 	public void CallImpact() {
-		gameObject.SetActive(true);
 		StartCoroutine(Impact());
 	}
 
@@ -67,6 +65,7 @@ public class MagicController : MonoBehaviour {
 	 * 衝突時のエフェクトを表示する
 	 *************************************************************/
 	IEnumerator Impact() {
+		gameObject.SetActive(true);
 		shotParticle.SetActive(false);
 		foreach (Transform shotChild in shotParticle.transform) {
 			shotChild.gameObject.SetActive(false);

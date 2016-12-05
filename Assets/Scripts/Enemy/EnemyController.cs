@@ -185,6 +185,7 @@ public class EnemyController : MonoBehaviour {
 		if (reservedActions.Count < 1) yield break;	// 行動キャンセル時は終了
 
 		// 各攻撃に応じたエフェクトの生成
+		Debug.Log (debugTime + " <color=blue>DoAttack エフェクト再生:" + actionKey.ToString() + "</color>");
 		if (EnemyActionGroupModel.IsShortRangeAttackActionKey(actionKey)) CreateShortRangeAttackEffect((int)actionKey);
 		if (EnemyActionGroupModel.IsLongRangeAttackActionKey(actionKey)) CreateLongRangeAttackEffect((int)actionKey);
 		if (EnemyActionGroupModel.ActionKey.SkillAttack.Equals(actionKey)) SkillAttackEffect((int)actionKey);

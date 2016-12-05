@@ -10,6 +10,7 @@ public class DungeonInitializer : MonoBehaviour {
 	public GameObject enemyRoot;
 	public GameObject battleObjectRoot;
 	private FloorModel floorModel;
+	public MasterDataManager masterDataManager;
 
 	//静的ダンジョンデバッグ用
 	/*void Start() {
@@ -20,6 +21,11 @@ public class DungeonInitializer : MonoBehaviour {
 	 * シーン読込時の初期処理 (DunGenのRuntimeDungeonスクリプトの処理終了時に呼ばれる)
 	 *************************************************************/
 	public void Initialize () {
+		Application.targetFrameRate = 60;
+
+		masterDataManager = new MasterDataManager();
+		masterDataManager.GetMasterDataAll();
+
 		SettingFloor();
 		GeneratePlayer();
 		GenerateEnemies();

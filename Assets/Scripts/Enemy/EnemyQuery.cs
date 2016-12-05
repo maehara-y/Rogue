@@ -49,8 +49,8 @@ public class EnemyQuery {
 		model.shortRangeActionGroupId = 1;
 		model.longRangeActionGroupId = 2;
 		model.longAttackHitRate = 0.2f;
-		model.longAttackRangeMin = 6.0f;
-		model.longAttackRangeMax = 18.0f;
+		model.longAttackRangeMin = 12.0f;
+		model.longAttackRangeMax = 20.0f;
 		model.attackDamageRates = "1,0.5,2,1.6,0.8,3.2,5";
 		int index = Random.Range(1,4);
 		switch(index) {

@@ -126,13 +126,13 @@ public class EnemyActionGroupModel {
 		} else if(ActionKey.ShortRangeChargeAttack.Equals(actionKey)) {
 			attackWaitTime = 2.0f;
 		} else if(ActionKey.LongRangeNormalAttack.Equals(actionKey)) {
-			attackWaitTime = 2.0f;
+			attackWaitTime = 1.5f;
 		} else if(ActionKey.LongRangeQuickAttack.Equals(actionKey)) {
 			attackWaitTime = 1.0f;
 		} else if(ActionKey.LongRangeChargeAttack.Equals(actionKey)) {
-			attackWaitTime = 2.5f;
+			attackWaitTime = 2.0f;
 		} else if(ActionKey.SkillAttack.Equals(actionKey)) {
-			attackWaitTime = 4.0f;
+			attackWaitTime = 3.0f;
 		}
 		return attackWaitTime;
 	}
