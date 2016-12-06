@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class EnemyActionGroupModel {
 
@@ -10,7 +11,7 @@ public class EnemyActionGroupModel {
 	[SerializeField] public float rate { get; set; }
 
 	public enum ActionKey { 
-		ShortRangeNormalAttack, ShortRangeQuickAttack, ShortRangeChargeAttack,
+		Null, ShortRangeNormalAttack, ShortRangeQuickAttack, ShortRangeChargeAttack,
 		LongRangeNormalAttack, LongRangeQuickAttack, LongRangeChargeAttack,
 		SkillAttack, BackStep, BackLeftStep, BackCenterStep, BackRightStep, 
 		FrontStep, FrontLeftStep, FrontCenterStep, FrontRightStep, 
@@ -26,7 +27,7 @@ public class EnemyActionGroupModel {
 		if (dataRow["id"] != null) id = (int)dataRow["id"];
 		if (dataRow["group_id"] != null) groupId = (int)dataRow["group_id"];
 		if (dataRow["action_keys"] != null) actionKeys = (string)dataRow["action_keys"];
-		if (dataRow["rate"] != null) rate = (float)dataRow["rate"];
+		if (dataRow["rate"] != null) rate = (float)Convert.ToDouble(dataRow["rate"]);
 	}
 
 	/*************************************************************
@@ -125,28 +126,5 @@ public class EnemyActionGroupModel {
 			positions = new float[] { -2f,  2f,  2f,  6f };
 		}
 		return positions;
-	}
-
-	/*************************************************************
-	 * actionKeyから攻撃の待ち時間を取得する
-	 *************************************************************/
-	public static float AttackWaitTimeActionKey(ActionKey actionKey) {
-		float attackWaitTime = 0f;
-		if (ActionKey.ShortRangeNormalAttack.Equals(actionKey)) {
-			attackWaitTime = 1.5f;
-		} else if(ActionKey.ShortRangeQuickAttack.Equals(actionKey)) {
-			attackWaitTime = 1.0f;
-		} else if(ActionKey.ShortRangeChargeAttack.Equals(actionKey)) {
-			attackWaitTime = 2.0f;
-		} else if(ActionKey.LongRangeNormalAttack.Equals(actionKey)) {
-			attackWaitTime = 1.5f;
-		} else if(ActionKey.LongRangeQuickAttack.Equals(actionKey)) {
-			attackWaitTime = 1.0f;
-		} else if(ActionKey.LongRangeChargeAttack.Equals(actionKey)) {
-			attackWaitTime = 2.0f;
-		} else if(ActionKey.SkillAttack.Equals(actionKey)) {
-			attackWaitTime = 3.0f;
-		}
-		return attackWaitTime;
 	}
 }

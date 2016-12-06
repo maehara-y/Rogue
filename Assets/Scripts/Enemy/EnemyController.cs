@@ -34,7 +34,7 @@ public class EnemyController : MonoBehaviour {
 	private Vector3 stepDestination;				// ステップの着地点
 	// 予約済バトル行動indexリスト
 	private List<EnemyActionGroupModel.ActionKey> reservedActions = new List<EnemyActionGroupModel.ActionKey>();
-	private string currentActionKey;
+	private EnemyActionGroupModel.ActionKey currentActionKey;
 
 	private float debugTime = 0;
 
@@ -74,7 +74,7 @@ public class EnemyController : MonoBehaviour {
 		if (playerController.isDead) {
 			state = EnemyState.Wait;
 			animator.SetBool("Run", false);
-			currentActionKey = null;
+			currentActionKey = EnemyActionGroupModel.ActionKey.Null;
 			return;
 		}
 
@@ -136,14 +136,14 @@ public class EnemyController : MonoBehaviour {
 			state = EnemyState.Wait;
 			animator.SetBool("Run", false);
 			animator.SetBool("Idle", true);
-			currentActionKey = null;
+			currentActionKey = EnemyActionGroupModel.ActionKey.Null;
 		} else {
 			// 追跡範囲内なら追跡
 			//Debug.Log ("<color=green>追跡スタート</color>");
 			state = EnemyState.Chase;
 			animator.SetBool("Idle", false);
 			animator.SetBool("Run", true);
-			currentActionKey = null;
+			currentActionKey = EnemyActionGroupModel.ActionKey.Null;
 			enemyController.SimpleMove(transform.forward * runSpeed);
 		}
 	}
@@ -161,14 +161,13 @@ public class EnemyController : MonoBehaviour {
 	 *************************************************************/
 	private void DoAction(EnemyActionGroupModel.ActionKey actionKey) {
 		if (reservedActions.Count < 1) return;		// 行動キャンセル時は終了
-		currentActionKey = actionKey.ToString();
+		currentActionKey = actionKey;
 		if (EnemyActionGroupModel.IsAttackActionKey(actionKey)) {
 			isAttack = true;
 			animator.SetBool("Idle", false);
 			animator.SetBool("Run", false);
 			animator.SetTrigger(actionKey.ToString());
 			Debug.Log (debugTime + " <color=red>DoAction 攻撃:" + actionKey.ToString() + "</color>");
-			StartCoroutine("DoAttack", actionKey);
 		}
 		if (EnemyActionGroupModel.IsStepActionKey(actionKey)) {
 			if (isStepping) return;
@@ -178,24 +177,41 @@ public class EnemyController : MonoBehaviour {
 	}
 
 	/*************************************************************
-	 * 攻撃アクションの実行
+	 * 攻撃エフェクトの再生 (アニメーション再生中イベントから呼び出される)
 	 *************************************************************/
-	IEnumerator DoAttack(EnemyActionGroupModel.ActionKey actionKey) {
-		yield return new WaitForSeconds(EnemyActionGroupModel.AttackWaitTimeActionKey(actionKey));
-		if (reservedActions.Count < 1) yield break;	// 行動キャンセル時は終了
+	public void PlayAttackEffect() {
+		if (reservedActions.Count < 1) return;	// 行動キャンセル時は終了
 
+		Debug.Log ("PlayAttackEffect start");
 		// 各攻撃に応じたエフェクトの生成
-		Debug.Log (debugTime + " <color=blue>DoAttack エフェクト再生:" + actionKey.ToString() + "</color>");
-		if (EnemyActionGroupModel.IsShortRangeAttackActionKey(actionKey)) CreateShortRangeAttackEffect((int)actionKey);
-		if (EnemyActionGroupModel.IsLongRangeAttackActionKey(actionKey)) CreateLongRangeAttackEffect((int)actionKey);
-		if (EnemyActionGroupModel.ActionKey.SkillAttack.Equals(actionKey)) SkillAttackEffect((int)actionKey);
+		Debug.Log (debugTime + " <color=blue>DoAttack エフェクト再生:" + currentActionKey.ToString() + "</color>");
+		if (EnemyActionGroupModel.IsShortRangeAttackActionKey(currentActionKey)) CreateShortRangeAttackEffect((int)currentActionKey);
+		if (EnemyActionGroupModel.IsLongRangeAttackActionKey(currentActionKey)) CreateLongRangeAttackEffect((int)currentActionKey);
+		if (EnemyActionGroupModel.ActionKey.SkillAttack.Equals(currentActionKey)) SkillAttackEffect((int)currentActionKey);
+	}
 
+	/*************************************************************
+	 * アニメーション再生終了イベント
+	 *************************************************************/
+	public void EndAttackMotion() {
+		Debug.Log ("EndAttackMotion");
+		StartCoroutine(EndAttackMotionCoroutine());
+	}
+
+	/*************************************************************
+	 * アニメーション再生終了イベント - コルーチン処理
+	 *************************************************************/
+	IEnumerator EndAttackMotionCoroutine() {
 		if (reservedActions.Count < 1) yield break;	// 行動キャンセル時は終了
+
+		Debug.Log ("EndAttackMotionCoroutine");
 		reservedActions.RemoveAt(0);
 		if (reservedActions.Count < 1) {
-			yield return new WaitForSeconds(2f);
+			yield return new WaitForSeconds (2f);
 			state = EnemyState.Wait;
-		}
+		} else {
+			yield return new WaitForSeconds(0.2f);
+		} 
 		isAttack = false;
 	}
 
@@ -359,9 +375,8 @@ public class EnemyController : MonoBehaviour {
 
 			// バトルアクション中の場合は、チャージ攻撃のみ被ダメアニメーションになって行動予約リストをキャンセルする
 			bool isChargeAttack = false;
-			if (currentActionKey != null) {
-				EnemyActionGroupModel.ActionKey currentKey = (EnemyActionGroupModel.ActionKey)Enum.Parse(typeof(EnemyActionGroupModel.ActionKey), currentActionKey);
-				isChargeAttack = EnemyActionGroupModel.IsChargeAttackActionKey(currentKey);
+			if (!currentActionKey.Equals(EnemyActionGroupModel.ActionKey.Null)) {
+				isChargeAttack = EnemyActionGroupModel.IsChargeAttackActionKey(currentActionKey);
 			}
 			if (state == EnemyState.Wait || state == EnemyState.Chase || (isAttack && isChargeAttack)) {
 				Debug.Log (debugTime + " <color=green>被ダメモーション開始</color>");

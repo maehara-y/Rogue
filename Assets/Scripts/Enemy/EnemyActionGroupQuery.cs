@@ -31,7 +31,7 @@ public class EnemyActionGroupQuery {
 		List<EnemyActionGroupModel> group = FindByGroupId(groupId);
 		for (int i=0; i < group.Count; i++) {
 			// TODO:ランダム選出する
-			EnemyActionGroupModel model = group[i];
+			//EnemyActionGroupModel model = group[i];
 			//model.rate;
 		}
 		/*
@@ -43,6 +43,8 @@ public class EnemyActionGroupQuery {
 		// TODO:テスト実装
 		List<EnemyActionGroupModel.ActionKey> result = new List<EnemyActionGroupModel.ActionKey>();
 		if (groupId == 1) {
+			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeChargeAttack);
+			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeNormalAttack);
 			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeQuickAttack);
 			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeQuickAttack);
 			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeChargeAttack);
