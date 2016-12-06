@@ -5,23 +5,23 @@ using System.Collections.Generic;
 
 public class EnemyActionGroupQuery {
 
+	private static string tableName = "m_enemy_action_group";
+
 	/*************************************************************
 	 * グループIDから該当するモデルのリストを取得する
 	 *************************************************************/
 	public static List<EnemyActionGroupModel> FindByGroupId(int groupId) {
-		// TODO:テスト用
-		List<EnemyActionGroupModel> list = new List<EnemyActionGroupModel>();
-		EnemyActionGroupModel model1 = new EnemyActionGroupModel();
-		EnemyActionGroupModel model2 = new EnemyActionGroupModel();
-		EnemyActionGroupModel model3 = new EnemyActionGroupModel();
-		EnemyActionGroupModel model4 = new EnemyActionGroupModel();
-		EnemyActionGroupModel model5 = new EnemyActionGroupModel();
-		list.Add(model1);
-		list.Add(model2);
-		list.Add(model3);
-		list.Add(model4);
-		list.Add(model5);
-		return list;
+
+		string selectQuery = "select * from " + tableName + " where group_id = " + groupId;
+		DataTable dataTable = SqliteDatabase.Instance.ExecuteQuery(selectQuery);
+
+		List<EnemyActionGroupModel> enemyActionGroupModels = new List<EnemyActionGroupModel>();
+		foreach(DataRow dataRow in dataTable.Rows){
+			EnemyActionGroupModel model = new EnemyActionGroupModel();
+			model.setFieldsFromDataRow(dataRow);
+			enemyActionGroupModels.Add(model);
+		}
+		return enemyActionGroupModels;
 	}
 
 	/*************************************************************

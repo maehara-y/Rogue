@@ -3,6 +3,7 @@ using System.Collections;
 
 public class EnemyActionGroupModel {
 
+	public static string[] columNames = {"id", "group_id", "action_keys", "rate"};
 	[SerializeField] public int id { get; set; }
 	[SerializeField] public int groupId { get; set; }
 	[SerializeField] public string actionKeys { get; set; }
@@ -14,6 +15,18 @@ public class EnemyActionGroupModel {
 		SkillAttack, BackStep, BackLeftStep, BackCenterStep, BackRightStep, 
 		FrontStep, FrontLeftStep, FrontCenterStep, FrontRightStep, 
 		SideStep, LeftStep, RightStep
+	}
+
+	/*************************************************************
+	 * 全てのフィールドにマスターデータをセットする
+	 *************************************************************/
+	public void setFieldsFromDataRow(DataRow dataRow) {
+		if (dataRow.Count < 1) return;
+
+		if (dataRow["id"] != null) id = (int)dataRow["id"];
+		if (dataRow["group_id"] != null) groupId = (int)dataRow["group_id"];
+		if (dataRow["action_keys"] != null) actionKeys = (string)dataRow["action_keys"];
+		if (dataRow["rate"] != null) rate = (float)dataRow["rate"];
 	}
 
 	/*************************************************************

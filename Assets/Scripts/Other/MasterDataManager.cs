@@ -13,38 +13,38 @@ public class MasterDataManager {
 	private Dictionary<string, string> tableGIds = new Dictionary<string, string> ();
 
 	public void CreateTableGIds () {
+		// TODO:ここにテーブル情報を追加
 		tableGIds.Add ("m_enemy_action_group", "937516204");
 	}
 
 	public void GetMasterDataAll () {
 		CreateTableGIds();
-		SqliteDatabase sqlDB = new SqliteDatabase("rogue.db");
 
 		// マスター単位でループする
 		List<string> keyList = new List<string>(tableGIds.Keys);
 		for (int i=0; i < keyList.Count; i++) {
 			string tableName = keyList[i];
 
-			Debug.Log("persistentDataPath: " + Application.persistentDataPath);
+			//Debug.Log("persistentDataPath: " + Application.persistentDataPath);
 			// TODO:一時処理
 			/*string selectQuery2 = "select * from " + tableName;
-			DataTable dataTable2 = sqlDB.ExecuteQuery(selectQuery2);
+			DataTable dataTable2 = SqliteDatabase.Instance.ExecuteQuery(selectQuery2);
 			string deleteQuery = "delete from " + tableName;
-			sqlDB.ExecuteNonQuery(deleteQuery);*/
+			SqliteDatabase.Instance.ExecuteNonQuery(deleteQuery);*/
 
 			// SQLiteのテーブルのデータをチェック
 			string selectQuery = "select * from " + tableName;
-			DataTable dataTable = sqlDB.ExecuteQuery(selectQuery);
+			DataTable dataTable = SqliteDatabase.Instance.ExecuteQuery(selectQuery);
 			if (dataTable.Rows.Count > 0) {
-				Debug.Log ("データあり tableName:" + tableName);
+				//Debug.Log ("データあり tableName:" + tableName);
 				continue;
 			}
 			// なければスプレッドシートから取得
 			WWW masterData = new WWW(masterDataBaseUrl + tableGIds[tableName]);
-			/*while (!masterData.isDone) { 
+			while (!masterData.isDone) { 
 				// ダウンロードの進捗を表示
 				//Debug.Log(Mathf.CeilToInt(masterData.progress * 100));
-			}*/
+			}
 
 			if (!string.IsNullOrEmpty(masterData.error)) { 
 				// ダウンロードでエラーが発生した場合
@@ -97,7 +97,7 @@ public class MasterDataManager {
 						// SQLiteに挿入する
 						string query = "INSERT INTO " + tableName + "(" + culomns + ") VALUES(" + values + ")";
 						//Debug.Log ("tableName:" + tableName + ", rowIndex:" + currentRowIndex + ", query:" + query);
-						sqlDB.ExecuteNonQuery(query);
+						SqliteDatabase.Instance.ExecuteNonQuery(query);
 					}
 					currentRowIndex++;
 				}

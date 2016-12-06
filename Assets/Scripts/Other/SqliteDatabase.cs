@@ -81,7 +81,19 @@ public class SqliteDatabase
 	
 	private string pathDB;
 	
-	
+	// シングルトン対応
+	private static SqliteDatabase instance;
+	private static string dbName = "rogue.db";
+	private SqliteDatabase() {} // Private Constructor
+	public static SqliteDatabase Instance {
+		get {
+			if(SqliteDatabase.instance == null) {
+				SqliteDatabase.instance = new SqliteDatabase(dbName);
+			}
+			return SqliteDatabase.instance;
+		}
+	}
+
     #region Public Methods
     
 	/// <summary>
