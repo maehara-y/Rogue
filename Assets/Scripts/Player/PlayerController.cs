@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public class PlayerController : MonoBehaviour {
 
@@ -13,8 +14,11 @@ public class PlayerController : MonoBehaviour {
 	private Vector3 moveDirection = Vector3.zero;
 	private CharacterController controller;	
 	private Animator animator;
+	private float guardValidTime = 0.15f;
+	private float guardWaitTime = 0.1f;
 
 	// UI系
+	public Camera mainCamera;
 	public Text lvText;
 	public Text hpMpText;
 	public Slider hpBar;
@@ -24,12 +28,18 @@ public class PlayerController : MonoBehaviour {
 	public Button itemSettingButton;
 	private Text itemSettingText;
 	public Text gameOver;
+	public GameObject damageFlash;
+	public GameObject guardFlash;
 	public GameObject battleObjectRoot;
+	private Image damageFlashImage;
+	private Image guardFlashImage;
 
 	// 状態制御系
 	public bool isAttack = false;
 	public bool isDead = false;
 	public bool isDamage = false;
+	public bool isGuard = false;
+	public bool isGuardWait = false;
 
 	// パラメータ系
 	public PlayerModel playerModel;
@@ -49,6 +59,8 @@ public class PlayerController : MonoBehaviour {
 	public void Initialize() {
 		controller = GetComponent<CharacterController>();
 		animator = GetComponent<Animator>();
+		damageFlashImage = damageFlash.GetComponent<Image>();
+		guardFlashImage = guardFlash.GetComponent<Image>();
 		playerModel = new PlayerModel();
 		playerModel.Initialize();
 
@@ -131,6 +143,7 @@ public class PlayerController : MonoBehaviour {
 	public void MoveRight() { isRight = true; }
 	public void MoveRightStop() { isRight = false; }
 	public void TapAttack() { StartCoroutine(Attack()); }
+	public void TapGuard() { StartCoroutine(Guard()); }
 
 
 	/*************************************************************
@@ -192,17 +205,36 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	/*************************************************************
+	 * ジャストガード、防御 (タップタイミングの記録)
+	 *************************************************************/
+	IEnumerator Guard() {
+		if (isGuard || isGuardWait) yield break;
+
+		isGuard = true;
+		Debug.Log("<color=blue>ジャストガード - タップ！！</color>");
+
+		yield return new WaitForSeconds(guardValidTime);
+		isGuard = false;
+		isGuardWait = true;
+
+		yield return new WaitForSeconds(guardWaitTime);
+		isGuardWait = false;
+	}
+
+	/*************************************************************
 	 * 被ダメージ用の衝突判定
 	 *************************************************************/
 	void OnTriggerEnter(Collider col) {
 		// TODO:モンスターが死んでから発せられた攻撃は無効にする
 		if (col.gameObject.tag != "EnemyAttackTag") return;
 
+		Debug.Log("<color=red>敵のエフェクトが衝突！！</color>");
+
 		// ダメージ計算
 		EnemyAttack enemyAttack = col.gameObject.GetComponent<EnemyAttack>();
 		int damage = 0;
 		if (BattleCalculator.IsHitPlayer(playerModel, enemyAttack.enemyModel)) {
-			damage = BattleCalculator.GetPlayerDamage(playerModel, enemyAttack.enemyModel, enemyAttack.actionKey);
+			damage = BattleCalculator.GetPlayerDamage(playerModel, enemyAttack.enemyModel, enemyAttack.actionKey, isGuard);
 		}
 		// TODO:一時処理
 		//Destroy(col.gameObject);
@@ -224,8 +256,20 @@ public class PlayerController : MonoBehaviour {
 		isDamage = true;
 		playerModel.hp -= damage;
 		animator.SetTrigger("TakeDamage");
-		// TODO:一時処理 実際は0.5秒くらい？
-		yield return new WaitForSeconds(0.01f);
+
+		if (isGuard) {
+			Debug.Log("<color=green>ジャストガード - 成功！！</color>");
+			guardFlashImage.DOFade(0.7f, 0.2f);
+			yield return new WaitForSeconds(0.3f);
+			guardFlashImage.DOFade(0.0f, 0.2f);
+		} else {
+			// TODO:画面を揺らす対応は、VRプレイ時は酔うので無効化しよう
+			mainCamera.DOShakePosition(0.5f, 0.5f, 10, 90.0f);
+			damageFlashImage.DOFade(0.7f, 0.2f);
+			yield return new WaitForSeconds(0.3f);
+			damageFlashImage.DOFade(0.0f, 0.2f);
+		}
+		yield return new WaitForSeconds(0.2f);
 		isDamage = false;
 	}
 

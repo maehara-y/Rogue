@@ -6,9 +6,9 @@ public class BattleCalculator : MonoBehaviour {
 	/*************************************************************
 	 * 敵攻撃時のプレイヤー側ダメージ計算を行う
 	 *************************************************************/
-	public static int GetPlayerDamage(PlayerModel player, EnemyModel enemy, EnemyActionGroupModel.ActionKey actionKey) {
+	public static int GetPlayerDamage(PlayerModel player, EnemyModel enemy, EnemyActionGroupModel.ActionKey actionKey, bool isGuard) {
 		// TODO:計算式記述
-		return 5;
+		return (isGuard) ? 0 : 5;
 	}
 
 	/*************************************************************

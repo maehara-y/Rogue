@@ -43,8 +43,6 @@ public class EnemyActionGroupQuery {
 		// TODO:テスト実装
 		List<EnemyActionGroupModel.ActionKey> result = new List<EnemyActionGroupModel.ActionKey>();
 		if (groupId == 1) {
-			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeChargeAttack);
-			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeNormalAttack);
 			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeQuickAttack);
 			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeQuickAttack);
 			result.Add(EnemyActionGroupModel.ActionKey.ShortRangeChargeAttack);
