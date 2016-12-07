@@ -110,7 +110,7 @@ public class EnemyController : MonoBehaviour {
 			StartCoroutine(ControlLongAttackCheck());
 			float randomVal = UnityEngine.Random.value;
 			// TODO:一時処理
-			randomVal = 0.9f;
+			randomVal = 0.1f;
 			if (enemyModel.longAttackHitRate >= randomVal) {
 				//Debug.Log ("<color=blue>ロングレンジ攻撃予約 randomVal:" + randomVal + "</color>");
 				state = EnemyState.Battle;
@@ -193,6 +193,7 @@ public class EnemyController : MonoBehaviour {
 	 * アニメーション再生終了イベント
 	 *************************************************************/
 	public void EndAttackMotion() {
+		Debug.Log ("<color=yellow>EndAttackMotion</color>");
 		StartCoroutine(EndAttackMotionCoroutine());
 	}
 
@@ -202,7 +203,7 @@ public class EnemyController : MonoBehaviour {
 	IEnumerator EndAttackMotionCoroutine() {
 		if (reservedActions.Count < 1) yield break;	// 行動キャンセル時は終了
 
-		//Debug.Log ("EndAttackMotionCoroutine");
+		Debug.Log ("<color=yellow>EndAttackMotionCoroutine</color>");
 		reservedActions.RemoveAt(0);
 		if (reservedActions.Count < 1) {
 			yield return new WaitForSeconds (1.0f);

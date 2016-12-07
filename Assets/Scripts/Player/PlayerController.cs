@@ -236,8 +236,8 @@ public class PlayerController : MonoBehaviour {
 		if (BattleCalculator.IsHitPlayer(playerModel, enemyAttack.enemyModel)) {
 			damage = BattleCalculator.GetPlayerDamage(playerModel, enemyAttack.enemyModel, enemyAttack.actionKey, isGuard);
 		}
-		// TODO:一時処理
-		//Destroy(col.gameObject);
+
+		StartCoroutine(HideEffect(col.gameObject));
 
 		// HPが0以下になったら死ぬ
 		if (playerModel.hp <= damage) {
@@ -249,6 +249,14 @@ public class PlayerController : MonoBehaviour {
 		DisplayStatus();
 	}
 
+	/*************************************************************
+	 * 敵の攻撃エフェクトを非表示にする
+	 *************************************************************/
+	IEnumerator HideEffect(GameObject targetObject) {
+		yield return new WaitForSeconds(0.5f);
+		// TODO:DestroyではなくSetActive(false)に変更する
+		Destroy(targetObject);
+	}
 	/*************************************************************
 	 * 被ダメージ処理
 	 *************************************************************/
