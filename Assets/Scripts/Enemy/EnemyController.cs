@@ -110,7 +110,7 @@ public class EnemyController : MonoBehaviour {
 			StartCoroutine(ControlLongAttackCheck());
 			float randomVal = UnityEngine.Random.value;
 			// TODO:一時処理
-			randomVal = 0.1f;
+			randomVal = 0.9f;
 			if (enemyModel.longAttackHitRate >= randomVal) {
 				//Debug.Log ("<color=blue>ロングレンジ攻撃予約 randomVal:" + randomVal + "</color>");
 				state = EnemyState.Battle;
